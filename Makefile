@@ -56,7 +56,7 @@
 # Separate makefile includes to Options and Platform.
 # Options includes Platform, so it is the only file to be included from non-root makefiles
 #
-#include Platform
+include Platform
 
 all: bldall
 
