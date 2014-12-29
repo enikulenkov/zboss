@@ -259,7 +259,7 @@ void zb_zdo_new_channel_cb(zb_uint8_t param) ZB_CALLBACK
    * counters */
   TRACE_MSG(TRACE_ZDO2, "new_channel_cb ch %hd", (FMT__H, param));
 
-  ZB_TRANSCEIVER_SET_CHANNEL(param); /* ignore retcode */
+  ZB_TRANSCEIVER_SET_CHANNEL(param);
   ZB_NIB_NWK_TX_TOTAL() = 0;
   ZB_NIB_NWK_TX_FAIL() = 0;
   ZB_NIB_UPDATE_ID()++;

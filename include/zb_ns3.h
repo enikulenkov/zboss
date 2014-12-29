@@ -85,7 +85,7 @@ zb_ret_t read_from_pipe();
 #define ZB_TRANS_CHECK_TX_RETRY_COUNT_EXCEEDED_ERROR() 0
 #define ZB_TRANS_CHECK_CHANNEL_BUSY_ERROR() 0
 #define ZB_TRANS_CHECK_CHANNEL_CCA_FAIL_ERROR() 0
-#define ZB_TRANSCEIVER_SET_CHANNEL(channel_number) (MAC_CTX().current_channel = channel_number, 0)
+#define ZB_TRANSCEIVER_SET_CHANNEL(channel_number) (MAC_CTX().current_channel = channel_number)
 #define ZB_TRANSCEIVER_SET_BEACON_ONLY_MODE() while(0)
 #define ZB_TRANSCEIVER_NORMAL_MODE() while(0)
 #define ZB_TRANSCEIVER_SET_COORD_EXT_ADDR(addr) 0

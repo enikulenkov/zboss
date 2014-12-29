@@ -188,7 +188,7 @@ void zb_sched_loop_iteration() ZB_SDCC_REENTRANT/* ZB_KEIL_REENTRANT */
 #endif
 #ifdef ZB_NS_BUILD
   {
-    ZB_TRY_IO();
+    (void)ZB_TRY_IO();
   }
 #endif
 }
