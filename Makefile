@@ -91,8 +91,11 @@ clobber: clean
 	$(FIND) . \( -name '*~' -o -name '.#*' -o -name 'core' -o -name 'core.*' -o -type l -a -name Makefile \) -exec rm {} \;
 	rm -f deps  TAGS tags BROWSE
 
-tags:
+etags:
 	($(FIND) . -name \*.[ch] -print) | grep -v ".*~" | etags -
+
+ctags:
+	($(FIND) . -name \*.[ch] -print) | grep -v ".*~" | ctags -L -
 
 rebuild: makefile_links clean depend all
 
