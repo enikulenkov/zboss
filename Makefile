@@ -95,7 +95,7 @@ etags:
 	($(FIND) . -name \*.[ch] -print) | grep -v ".*~" | etags -
 
 ctags:
-	($(FIND) . -name \*.[ch] -print) | grep -v ".*~" | ctags -L -
+	($(FIND) . -name \*.[ch] -print) | grep -v ".*~" | ctags -I ZB_CALLBACK,ZB_SDCC_REENTRANT,ZB_SDCC_BANKED -L -
 
 rebuild: makefile_links clean depend all
 
