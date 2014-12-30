@@ -996,8 +996,10 @@ void zb_mcps_data_indication(zb_uint8_t param) ZB_CALLBACK
   hdr_size = ZB_NWK_HDR_SIZE((nwk_hdr)->frame_control);
   frame_type = ZB_NWK_FRAMECTL_GET_FRAME_TYPE(nwk_hdr->frame_control);
 
-  /* check frame consistency */
+  (void)hdr_size;
   TRACE_MSG(TRACE_NWK3, "hdr_size %d radius %hd frame type %hd", (FMT__D_H_H, hdr_size, nwk_hdr->radius, frame_type));
+
+  /* check frame consistency */
   if ( nwk_hdr->radius == 0
        || ( frame_type != ZB_NWK_FRAME_TYPE_COMMAND
             && frame_type != ZB_NWK_FRAME_TYPE_DATA ))

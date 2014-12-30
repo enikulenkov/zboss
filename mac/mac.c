@@ -354,7 +354,6 @@ void zb_mac_main_loop()
 
 void zb_mac_parse_recv_data(zb_uint8_t param) ZB_CALLBACK
 {
-  zb_ret_t ret = RET_OK;
   zb_uint8_t *fcf;
   zb_uint8_t *cmd_ptr;
   zb_mac_mhr_t mhr;
@@ -488,7 +487,7 @@ void zb_mac_parse_recv_data(zb_uint8_t param) ZB_CALLBACK
     zb_free_buf(buf);
     buf = NULL;
   }
-  TRACE_MSG(TRACE_MAC1, "<<mac_parse_recv_data %d", (FMT__D, ret));
+  TRACE_MSG(TRACE_MAC1, "<<mac_parse_recv_data", (FMT__0));
 }
 
 

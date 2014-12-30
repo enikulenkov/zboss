@@ -281,12 +281,14 @@ void zb_mlme_send_association_req_cmd(zb_uint8_t param) ZB_CALLBACK
 
   MAC_ADD_FCS(MAC_CTX().operation_buf);
   ret = ZB_TRANS_SEND_COMMAND(mhr_len, MAC_CTX().operation_buf);
+  /* TODO: Do MAC association confirm with corresponding error */
+  (void)ret;
   MAC_CTX().tx_wait_cb = zb_mlme_send_association_req_continue;
 
   TRACE_MSG(TRACE_MAC2, "<<mlme_send_ass_req_cmd, ret %i", (FMT__D, ret));
 }
 
 
-/* associate responce - coordinator side. send response to device asynchronously */
+/* associate response - coordinator side. send response to device asynchronously */
 
 /*! @} */

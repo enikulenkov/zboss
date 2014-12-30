@@ -186,6 +186,7 @@ zb_ret_t zb_nwk_unsecure_frame(zb_uint8_t param, zb_mac_mhr_t *mhr, zb_uint8_t m
       */
       ZB_LETOH16(&nwk_addr, &nwk_hdr->src_addr);
       TRACE_MSG(TRACE_SECUR2, "nwk addr: 0x%x, mac addr 0x%x", (FMT__D_D, nwk_addr, mhr->src_addr.addr_short));
+      (void)nwk_addr;
       ret = zb_nwk_neighbor_get(addr_ref, (zb_bool_t)(nwk_hdr->src_addr == mhr->src_addr.addr_short), &nbe);
     }
   }

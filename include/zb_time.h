@@ -125,7 +125,7 @@ typedef zb_uint16_t zb_time_t;
 
    @param a - first time value to compare
    @param b - second time value to compare
-   @return 1 is a >= b, 0 otherwhise
+   @return 1 if a >= b, 0 otherwhise
  */
 #define ZB_TIME_GE(a, b) ((zb_time_t)((a) - (b)) < ZB_HALF_MAX_TIME_VAL)
 

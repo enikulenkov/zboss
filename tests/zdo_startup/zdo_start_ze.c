@@ -159,11 +159,12 @@ void send_data(zb_uint8_t param) ZB_CALLBACK
 
 void data_indication(zb_uint8_t param)
 {
-  zb_uint8_t *ptr;
+  zb_uint8_t *dummy;
   zb_buf_t *asdu = (zb_buf_t *)ZB_BUF_FROM_REF(param);
 
   /* Remove APS header from the packet */
-  ZB_APS_HDR_CUT_P(asdu, ptr);
+  ZB_APS_HDR_CUT_P(asdu, dummy);
+  (void)dummy;
 
   TRACE_MSG(TRACE_APS2, "data_indication: packet %p len %d handle 0x%x", (FMT__P_D_D,
                          asdu, (int)ZB_BUF_LEN(asdu), asdu->u.hdr.status));

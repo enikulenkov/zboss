@@ -63,11 +63,12 @@ PURPOSE: time functions implementation for 8051 for the Common bank
 #endif
 ZB_INTERRUPT timer0_inter_handler(void) INTERRUPT_DECLARATION(TIMER0_INTER_NUMBER, REGISTER_BANK_2)
 {
+  zb_time_t stop_time = ZB_TIMER_CTX().timer_stop;
   ZB_TIMER_CTX().timer++;
 
   /* Stop timer if it expired or not running. */
   if (!ZB_TIMER_CTX().started ||
-       ZB_TIME_GE((zb_time_t)ZB_TIMER_CTX().timer, (zb_time_t)ZB_TIMER_CTX().timer_stop))
+       ZB_TIME_GE((zb_time_t)ZB_TIMER_CTX().timer, stop_time))
   {
     ZB_STOP_8051_TIMER();
     ZB_TIMER_CTX().timer_stop = ZB_TIMER_CTX().timer;

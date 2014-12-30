@@ -89,7 +89,11 @@ void zb_handle_scan_request(zb_uint8_t param) ZB_CALLBACK
       MAC_CTX().mac_status = MAC_INVALID_PARAMETER;
       break;
   }
-  TRACE_MSG(TRACE_MAC2, "<< zb_handle_scan_request i", (FMT__D, ret));
+
+  /* TODO: Process ret */
+  (void)ret;
+
+  TRACE_MSG(TRACE_MAC2, "<< zb_handle_scan_request, ret %d", (FMT__D, ret));
 }
 
 
@@ -339,9 +343,7 @@ void zb_mlme_scan_step(zb_uint8_t param) ZB_CALLBACK
 
 zb_ret_t zb_mlme_active_scan() ZB_SDCC_REENTRANT
 {
-  zb_ret_t ret = RET_OK;
   zb_mlme_scan_params_t *scan_params;
-  zb_uint8_t channel_number;
 
 /*
   mac spec 7.5.2.1.2 Active channel scan
@@ -366,25 +368,22 @@ zb_ret_t zb_mlme_active_scan() ZB_SDCC_REENTRANT
 #ifdef ZB_MAC_TESTING_MODE
   MAC_CTX().rt_ctx.active_scan.pan_desc_buf_param = ZB_UNDEFINED_BUFFER;
 #endif
-  channel_number = ZB_MAC_START_CHANNEL_NUMBER;
 
-  TRACE_MSG(TRACE_MAC3, "set beacon mode ret %d, param channels 0x%x", (FMT__D_D, ret, scan_params->channels));
+  TRACE_MSG(TRACE_MAC3, "set beacon mode param channels 0x%x", (FMT__D, scan_params->channels));
   MAC_CTX().unscanned_channels = scan_params->channels;
 
 #ifdef ZB_MAC_TESTING_MODE
   if (MAC_CTX().rt_ctx.active_scan.stop_scan)
   {
     ZB_SCHEDULE_ALARM_CANCEL(zb_mac_scan_timeout, 0);
-    ret = RET_OK;
-    break;
+    return RET_OK;
   }
 #endif
-  TRACE_MSG(TRACE_MAC2, "chan mask %x %x , chan %hd",
-            (FMT__D_D_H, ((zb_uint16_t*)&scan_params->channels)[0], ((zb_uint16_t*)&scan_params->channels)[1],
-             channel_number));
+  TRACE_MSG(TRACE_MAC2, "chan mask %x %x",
+            (FMT__D_D, ((zb_uint16_t*)&scan_params->channels)[0], ((zb_uint16_t*)&scan_params->channels)[1]));
   ZB_SCHEDULE_CALLBACK(zb_mlme_scan_step,0);
-  TRACE_MSG(TRACE_MAC1, "<< zb_mlme_active_scan, ret %i", (FMT__D, ret));
-  return ret;
+  TRACE_MSG(TRACE_MAC1, "<< zb_mlme_active_scan, ret 0", (FMT__0));
+  return RET_OK;
 }
 
 

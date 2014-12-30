@@ -235,7 +235,7 @@ static void auth_trans( /* Input */
 
 
   zb_uint8_t    buf[AES_BLOCK_LEN], *pbuf, *msg_in;
-  zb_uint8_t    i, j;
+  zb_uint8_t    i;
   zb_uint16_t   blocks, msg_len;
 
   zb_buf_t*     ptbuf;
@@ -536,7 +536,7 @@ static void decrypt_trans( /* Input  */
  *
  */
 
-static zb_uint8_t auth_check( zb_uint8_t  ccm_m,      /* Length of authentication field in octets [0,2,4,6,8,10,12,14 or 16] */
+static zb_ret_t auth_check( zb_uint8_t  ccm_m,      /* Length of authentication field in octets [0,2,4,6,8,10,12,14 or 16] */
                               zb_uint8_t* pNonce,     /* Pointer to 13-byte Nonce */
                               zb_uint8_t* pString_c,  /* Pointer to octet string 'c' = 'm' || auth tag T */
                               zb_uint16_t len_c,      /* Length of C[] in octets */
@@ -546,7 +546,7 @@ static zb_uint8_t auth_check( zb_uint8_t  ccm_m,      /* Length of authenticatio
                               zb_uint8_t* Cstate) {   /* Input:   Pointer to AES state buffer (cannot be part of C[])
                                                           Output:  The first Mval bytes contain computed Authentication Tag T */
   zb_uint8_t   i, t;
-  zb_uint8_t   status = RET_OK;
+  zb_ret_t     status = RET_OK;
 
   if( !ccm_m ) return RET_ERROR;  /* Check if authentication is even requested. */
 
@@ -560,7 +560,7 @@ static zb_uint8_t auth_check( zb_uint8_t  ccm_m,      /* Length of authenticatio
       break;
     }
   }
-  return(status);
+  return status;
 }
 
 
@@ -669,11 +669,10 @@ zb_ret_t zb_ccm_decrypt(zb_ushort_t ccm_m,           /* 'M' parameter - see tabl
                         zb_uint8_t*  pNonce,         /* Pointer to Nonce  */
                         zb_buf_t*    buf,            /*  */
                         zb_ushort_t  string_a_len,   /* l(a) */
-                        zb_ushort_t  string_c_len) { /* Length of C[] in octets   */
-
-  zb_uint8_t* c_text;
+                        zb_ushort_t  string_c_len)   /* Length of C[] in octets   */
+{
   zb_uint8_t  c[16];
-  zb_uint8_t  ret;
+  zb_ret_t    ret;
 
   zb_RfSecurityInit(pKey);
 
