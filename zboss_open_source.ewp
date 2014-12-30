@@ -2098,9 +2098,6 @@
     <file>
       <name>$PROJ_DIR$\common\zb_time.c</name>
     </file>
-    <file>
-      <name>$PROJ_DIR$\common\zb_trace.c</name>
-    </file>
   </group>
   <group>
     <name>mac</name>
