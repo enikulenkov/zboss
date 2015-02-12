@@ -115,3 +115,5 @@ tests/aps_dup_reject/aps_dups_rej_ze
 tests/aps_dup_reject/aps_dups_rej_zc
 tests/nwk_status/nwk_status_zr
 tests/nwk_status/nwk_status_zc
+*.dump
+*.log
