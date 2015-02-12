@@ -1,0 +1,13 @@
+{
+  "hooks": [
+    "networkSimulator"
+  ],
+  "device_pool": [
+    {
+      "type" : "linux_ns",
+      "params" : {
+        "max_instances" : 10
+      }
+    }
+  ]
+}

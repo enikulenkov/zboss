@@ -1,0 +1,174 @@
+#!/usr/bin/env python3
+
+import argparse
+import os
+import json
+import logging
+import sys
+
+from test_runner import TestRunner
+from device_pool import DevicePool
+from testRunHooks import *
+from zitt_common import ExecutionRetCode
+
+# Global zitt context
+zitt = {}
+
+def self_abs_dir():
+    return sys.path[0]
+
+def parse_args():
+    parser = argparse.ArgumentParser(description='ZBOSS integration testing tool')
+    parser.add_argument('-l', '--list',
+                       type=argparse.FileType('r'),
+                       required=False,
+                       help='File containing list of test descriptions to be executed',
+                       dest='test_list')
+    parser.add_argument('-t', '--test',
+                       required=False,
+                       help='Single test description',
+                       dest='single_test')
+    parser.add_argument('-c', '--config',
+                       type=argparse.FileType('r'),
+                       required=False,
+                       help='Zitt configuration file',
+                       dest='conf',
+                       default=self_abs_dir() + '/defaults/default_conf.json')
+    parser.add_argument('-d', '--debug',
+                       required=False,
+                       help='Enable debugging messages',
+                       action='store_true')
+    parser.add_argument('-v', '--verbose',
+                       required=False,
+                       help='Increase output verbosity',
+                       action='store_true')
+
+    args = parser.parse_args()
+    return (parser, args)
+
+def check_args(args):
+    ret = 0
+    if args.test_list == None and args.single_test == None:
+        print("\nOne of the --list or --test should be specified\n")
+        ret = 1
+
+    return ret
+
+def run_testsuite_prerun_hooks():
+    for hook in zitt["conf"]["hooks"]:
+        globals()[hook].prerun_test_suite(zitt["conf"])
+
+def run_testsuite_postrun_hooks():
+    for hook in zitt["conf"]["hooks"]:
+        globals()[hook].postrun_test_suite(zitt["conf"])
+
+def run_test_prerun_hooks(test_descr):
+    for hook in zitt["conf"]["hooks"]:
+        globals()[hook].prerun_test(zitt, test_descr)
+
+def run_test_postrun_hooks(test_descr):
+    for hook in zitt["conf"]["hooks"]:
+        globals()[hook].postrun_test(zitt, test_descr)
+
+def run_test(descr_location):
+    pwd      = os.path.realpath(os.curdir)
+    test_dir = os.path.dirname(descr_location)
+
+    if test_dir == '':
+        # we already in test_dir
+        test_dir = '.'
+
+    os.chdir(test_dir)
+    with open(descr_location, "r") as f:
+        descr = json.load(f)
+        run_test_prerun_hooks(descr)
+        test_runner = TestRunner(descr)
+        ret = test_runner.run(zitt["device_pool"])
+        run_test_postrun_hooks(descr)
+
+        print("Test {} result {}".format(
+            descr['name'],
+            json.dumps(ret, indent=4, sort_keys=True, separators=(',', ': '))))
+
+        update_statistics(zitt["stats"], ret)
+
+
+    os.chdir(pwd)
+
+    return ret
+
+def init_zitt_ctx(ctx, args):
+    ctx['conf']        = json.load(args.conf)
+    ctx['device_pool'] = None
+    ctx['stats']       =  {"tests_executed" : 0,
+                           "tests_failed"   : 0,
+                           "errors_count"   : 0,
+                           "warnings_count" : 0}
+
+def update_statistics(stats, test_res):
+    test_failed = False
+    stats['tests_executed'] = stats['tests_executed'] + 1
+
+    if test_res['result'] != ExecutionRetCode.success:
+        test_failed = True
+
+    for instance_res in test_res['instances']:
+        errors_cnt = len(instance_res['errors'])
+        if instance_res['dev_return_code'] != 0:
+            test_failed = True
+        if errors_cnt:
+            stats['errors_count'] = stats['errors_count'] + errors_cnt
+            test_failed = True
+        stats['warnings_count'] = stats['warnings_count'] + len(instance_res['errors'])
+
+    if test_failed:
+        stats['tests_failed'] = stats['tests_failed'] + 1
+
+def print_statistics(stats):
+    print('Statistics:')
+    print(json.dumps(stats, indent=4, sort_keys=True, separators=(',', ': ')))
+
+def enable_logging(verbose, debug_output):
+    log_level = logging.ERROR
+
+    if verbose:
+        log_level = logging.INFO
+
+    if debug_output:
+        log_level = logging.DEBUG
+
+    logging.basicConfig(level=log_level)
+
+def _main(args):
+    enable_logging(args.verbose, args.debug)
+    init_zitt_ctx(zitt, args)
+    run_testsuite_prerun_hooks()
+    zitt["device_pool"] = DevicePool(zitt["conf"]["device_pool"])
+
+    if args.test_list:
+        for test_location in args.test_list:
+            ret = run_test(test_location.strip())
+
+    if args.single_test:
+        ret = run_test(args.single_test.strip())
+
+    run_testsuite_postrun_hooks()
+
+    print_statistics(zitt['stats'])
+
+    return zitt['stats']['errors_count']
+
+def main():
+    (parser, args) = parse_args()
+
+    ret = check_args(args)
+
+    if ret == 0:
+        ret = _main(args)
+    else:
+        parser.print_help()
+
+    return ret
+
+if __name__== '__main__':
+    sys.exit(main())
