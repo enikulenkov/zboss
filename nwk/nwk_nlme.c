@@ -499,7 +499,10 @@ void zb_nlme_get_confirm(zb_uint8_t param) ZB_CALLBACK
       || (conf->nib_attribute == ZB_NIB_ATTRIBUTE_MAX_BROADCAST_RETRIES)
       || (conf->nib_attribute == ZB_NIB_ATTRIBUTE_MAX_CHILDREN))
   {
-    TRACE_MSG(TRACE_NWK2, "attr %hd get param %hd", (FMT__H_H, conf->nib_attribute,  *(((zb_uint8_t *)conf) + sizeof(zb_nlme_get_confirm_t))));
+    TRACE_MSG(TRACE_NWK2, "attr %hd get param %hd",
+        (FMT__H_H,
+         conf->nib_attribute,
+         *(((zb_uint8_t *)conf) + sizeof(zb_nlme_get_confirm_t))));
   }
   TRACE_MSG(TRACE_NWK1, "<<zb_nlme_get_confirm status %hd", (FMT__H, conf->status));
   zb_free_buf(buf);
@@ -604,15 +607,12 @@ void zb_nlme_set_confirm(zb_uint8_t param) ZB_CALLBACK
 {
   zb_buf_t *buf = (zb_buf_t *)ZB_BUF_FROM_REF(param);
 
-  TRACE_MSG(TRACE_NWK1, ">>zb_nlme_set_confirm %hd", (FMT__H, param));
+  TRACE_MSG(TRACE_NWK1, ">>zb_nlme_set_confirm param %hd status %hd",
+      (FMT__H_H, param, ((zb_nlme_set_confirm_t *)ZB_BUF_BEGIN(buf))->status));
 
-#ifdef ZB_TRACE_LEVEL
-  {
-  zb_nlme_set_confirm_t *conf = ( zb_nlme_set_confirm_t *)ZB_BUF_BEGIN(buf);
-  TRACE_MSG(TRACE_NWK1, "<<zb_nlme_set_confirm status %hd", (FMT__H, conf->status));
-  }
-#endif
   zb_free_buf(buf);
+
+  TRACE_MSG(TRACE_NWK1, "<<zb_nlme_set_confirm", (FMT__0));
 }
 #endif /* ZB_LIMITED_FEATURES */
 
@@ -627,7 +627,10 @@ void zb_nlme_send_status(zb_uint8_t param) ZB_CALLBACK
   TRACE_MSG(TRACE_NWK1, ">> zb_nlme_send_status param %hd", (FMT__H, param));
 
   nwk_alloc_and_fill_hdr(buf, request->dest_addr, NULL, NULL, ZB_FALSE, ZB_FALSE, ZB_TRUE);
-  status_cmd = (zb_nlme_status_indication_t *)nwk_alloc_and_fill_cmd(buf, ZB_NWK_CMD_NETWORK_STATUS, sizeof(zb_nlme_status_indication_t));
+  status_cmd = (zb_nlme_status_indication_t *)nwk_alloc_and_fill_cmd(
+      buf,
+      ZB_NWK_CMD_NETWORK_STATUS,
+      sizeof(zb_nlme_status_indication_t));
   status_cmd->status = request->status.status;
   status_cmd->network_addr = request->status.network_addr;
   ZB_NWK_ADDR_TO_LE16(status_cmd->network_addr);
