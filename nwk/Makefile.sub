@@ -53,7 +53,8 @@ nwk_SRCS += nwk/nwk_main.c nwk/nwk_nlme.c nwk/nwk_discovery.c nwk/nwk_formation.
 
 nwk_OBJS = ${nwk_SRCS:.c=.o}
 
-nwk.a: $(nwk_OBJS)
-	$(MAKE_LIB)
+-include $(nwk_OBJS:.o=.d)
 
-zboss_LIBS += nwk.a
+nwk/nwk.a: $(nwk_OBJS)
+
+zboss_LIBS += nwk/nwk.a

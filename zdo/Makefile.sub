@@ -52,7 +52,8 @@ zdo_SRCS += zdo/zdo_app.c zdo/zdo_rx.c zdo/zdo_disc_cli.c zdo/af_rx.c zdo/zdo_di
             zdo/zdo_bind_manage.c
 zdo_OBJS = ${zdo_SRCS:.c=.o}
 
-zdo.a: $(zdo_OBJS)
-	$(MAKE_LIB)
+-include $(zdo_OBJS:.o=.d)
 
-zboss_LIBS += zdo.a
+zdo/zdo.a: $(zdo_OBJS)
+
+zboss_LIBS += zdo/zdo.a

@@ -52,6 +52,10 @@ PLATFORM_DEFINES=-DZB_PLATFORM_LINUX_PC32
 
 ####### Common options
 
+ifneq ($(V),1)
+	Q := @
+endif
+
 CC	=	gcc
 #CC	=	cxref-cc
 CXX	=	g++
@@ -91,10 +95,6 @@ INCPATH = -Iosif/include -Iinclude
 
 DEPSWITCH      = -MM
 AR	=	ar
-RM      =       rm -rf
-MAKE    =       make -e
-
-MAKE_LIB    = $(AR) r $@ $^
 
 PROF_FLAG=
 
@@ -110,10 +110,15 @@ LINK_BINARY_CXX = $(CXX) -g $(PROF_FLAG) -o $@ $^ $(MEMDEBUG) -lpthread $(LINK_F
 
 # Dependency generation is explained at http://scottmcpeak.com/autodepend/autodepend.html
 .c.o:
-	$(CC) -c $(CFLAGS) $(DEFINES) $(INCPATH) -o $@ $<
-	$(CC) $(CFLAGS) $(INCPATH) $(DEFINES) $(DEPSWITCH) $< > $*.d
+	@echo CC $<
+	$(Q)$(CC) -c $(CFLAGS) $(DEFINES) $(INCPATH) -o $@ $<
+	@$(CC) $(CFLAGS) $(INCPATH) $(DEFINES) $(DEPSWITCH) $< > $*.d
 	@mv -f $*.d $*.d.tmp
 	@sed -e 's|.*:|$*.o:|' < $*.d.tmp > $*.d
 	@sed -e 's/.*://' -e 's/\\$$//' < $*.d.tmp | fmt -1 | \
 	  sed -e 's/^ *//' -e 's/$$/:/' >> $*.d
 	@rm -f $*.d.tmp
+
+%.a:
+	@echo AR $@
+	$(Q)$(AR) r $@ $^

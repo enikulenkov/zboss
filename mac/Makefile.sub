@@ -53,7 +53,8 @@ mac_SRCS += mac/mac.c mac/mac_cr_coordinator.c mac/mac_fcs.c mac/zb_uz2400.c \
 
 mac_OBJS = ${mac_SRCS:.c=.o}
 
-mac.a: $(mac_OBJS)
-	$(MAKE_LIB)
+-include $(mac_OBJS:.o=.d)
 
-zboss_LIBS += mac.a
+mac/mac.a: $(mac_OBJS)
+
+zboss_LIBS += mac/mac.a

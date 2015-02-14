@@ -53,6 +53,5 @@ aps_OBJS := $(aps_SRCS:.c=.o)
 -include $(aps_OBJS:.o=.d)
 
 aps/aps.a: $(aps_OBJS)
-	$(MAKE_LIB)
 
 zboss_LIBS += aps/aps.a
