@@ -46,12 +46,4 @@
 #PURPOSE:
 #*/
 
-aps_SRCS := aps/aps_main.c aps/aps_dups.c aps/aps_bind.c aps/aps_commands.c aps/aps_nwk_confirm.c
-
-aps_OBJS := $(aps_SRCS:.c=.o)
-
--include $(aps_OBJS:.o=.d)
-
-aps/aps.a: $(aps_OBJS)
-
-zboss_LIBS += aps/aps.a
+zboss_SRCS += aps/aps_main.c aps/aps_dups.c aps/aps_bind.c aps/aps_commands.c aps/aps_nwk_confirm.c

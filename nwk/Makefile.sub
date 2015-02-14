@@ -46,15 +46,7 @@
 # PURPOSE: Makefile for NWK layer
 #*/
 
-nwk_SRCS += nwk/nwk_main.c nwk/nwk_nlme.c nwk/nwk_discovery.c nwk/nwk_formation.c \
-            nwk/nwk_cr_formation.c nwk/nwk_cr_permit_join.c nwk/nwk_cr_join.c nwk/nwk_join.c \
-            nwk/nwk_neighbor.c nwk/nwk_cr_route_discovery.c nwk/nwk_address_assign.c \
-            nwk/nwk_cr_tree_routing.c nwk/nwk_cr_mesh_routing.c nwk/nwk_panid_conflict.c
-
-nwk_OBJS = ${nwk_SRCS:.c=.o}
-
--include $(nwk_OBJS:.o=.d)
-
-nwk/nwk.a: $(nwk_OBJS)
-
-zboss_LIBS += nwk/nwk.a
+zboss_SRCS += nwk/nwk_main.c nwk/nwk_nlme.c nwk/nwk_discovery.c nwk/nwk_formation.c \
+              nwk/nwk_cr_formation.c nwk/nwk_cr_permit_join.c nwk/nwk_cr_join.c nwk/nwk_join.c \
+              nwk/nwk_neighbor.c nwk/nwk_cr_route_discovery.c nwk/nwk_address_assign.c \
+              nwk/nwk_cr_tree_routing.c nwk/nwk_cr_mesh_routing.c nwk/nwk_panid_conflict.c

@@ -46,15 +46,7 @@
 # PURPOSE: Makefile for common utilities
 #*/
 
-mac_SRCS += mac/mac.c mac/mac_cr_coordinator.c mac/mac_fcs.c mac/zb_uz2400.c \
-            mac/mac_scan.c mac/mac_cr_associate.c mac/mac_associate.c mac/zb_ns3.c \
-            mac/mac_data.c mac/mac_cr_data.c mac/mac_common.c mac/mac_routines.c \
-            mac/zb_uz2x_common.c
-
-mac_OBJS = ${mac_SRCS:.c=.o}
-
--include $(mac_OBJS:.o=.d)
-
-mac/mac.a: $(mac_OBJS)
-
-zboss_LIBS += mac/mac.a
+zboss_SRCS += mac/mac.c mac/mac_cr_coordinator.c mac/mac_fcs.c mac/zb_uz2400.c \
+              mac/mac_scan.c mac/mac_cr_associate.c mac/mac_associate.c mac/zb_ns3.c \
+              mac/mac_data.c mac/mac_cr_data.c mac/mac_common.c mac/mac_routines.c \
+              mac/zb_uz2x_common.c

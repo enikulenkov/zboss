@@ -46,14 +46,7 @@
 # PURPOSE: Makefile for common utilities
 #*/
 
-zdo_SRCS += zdo/zdo_app.c zdo/zdo_rx.c zdo/zdo_disc_cli.c zdo/af_rx.c zdo/zdo_disc_srv.c \
-            zdo/af_descriptor.c zdo/zdo_common.c zdo/zdo_nwk_manage_cli.c \
-            zdo/zdo_nwk_manage_srv.c zdo/zdo_channel_manager.c zdo/test_profile.c \
-            zdo/zdo_bind_manage.c
-zdo_OBJS = ${zdo_SRCS:.c=.o}
-
--include $(zdo_OBJS:.o=.d)
-
-zdo/zdo.a: $(zdo_OBJS)
-
-zboss_LIBS += zdo/zdo.a
+zboss_SRCS += zdo/zdo_app.c zdo/zdo_rx.c zdo/zdo_disc_cli.c zdo/af_rx.c zdo/zdo_disc_srv.c \
+              zdo/af_descriptor.c zdo/zdo_common.c zdo/zdo_nwk_manage_cli.c \
+              zdo/zdo_nwk_manage_srv.c zdo/zdo_channel_manager.c zdo/test_profile.c \
+              zdo/zdo_bind_manage.c

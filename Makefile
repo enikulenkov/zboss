@@ -59,12 +59,11 @@
 include Options
 include Platform
 
-all: zboss.a
+all: libs
 
 MODULES := common mac nwk osif/$(PLATFORM) secur aps zdo
 
 zboss_SRCS    :=
-zboss_LIBS    :=
 
 # include the description for each module
 include $(patsubst %, %/Makefile.sub, $(MODULES))
@@ -73,7 +72,9 @@ zboss_OBJS    := $(patsubst %.c, %.o, $(filter %.c, $(zboss_SRCS)))
 
 -include $(zboss_OBJS:.o=.d)
 
-zboss.a : $(zboss_OBJS) $(zboss_LIBS)
+libs: libzboss.a
+
+libzboss.a : $(zboss_OBJS)
 
 clean:
 	for i in $(MODULES); \
