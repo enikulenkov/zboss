@@ -43,18 +43,11 @@
 #* ClarIDy/UBEC/DSR.                                                        *
 #*                                                                          *
 #****************************************************************************
-# PURPOSE: Makefile for NWK layer
+# PURPOSE: Makefile for 8051 osif
 #*/
 
-BUILD_HOME=..
-include $(BUILD_HOME)/Options
-
-SRCS = secur_ccm.c apsme_secur.c zdo_secur.c nwk_secur.c aps_secur.c
-
-all: $(SECUR_LIB) $(SECUR_LIB_ED)
-
-$(SECUR_LIB) : $(OBJS)
-	$(MAKE_LIB)
-
-$(SECUR_LIB_ED) : $(OBJS_ED)
-	$(MAKE_LIB)
+zboss_SRCS = osif/8051/zb_8051_nvram.c osif/8051/zb_8051_serial.c osif/8051/zb_8051_serial_init.c \
+             osif/8051/zb_8051_spi.c osif/8051/zb_8051_spi_init.c osif/8051/zb_8051_xram.c \
+             osif/8051/zb_mac_transport_8051_direct.c osif/8051/zb_mac_transport_8051_ser.c \
+             osif/8051/zb_mac_transport_8051_spi.c osif/8051/zb_time_8051.c \
+             osif/8051/zb_time_8051_init.c osif/8051/zb_trace_8051.c osif/8051/zb_uz2400_common.c

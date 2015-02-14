@@ -46,17 +46,14 @@
 # PURPOSE: Makefile for common utilities
 #*/
 
-BUILD_HOME=..
-include $(BUILD_HOME)/Options
+mac_SRCS += mac/mac.c mac/mac_cr_coordinator.c mac/mac_fcs.c mac/zb_uz2400.c \
+            mac/mac_scan.c mac/mac_cr_associate.c mac/mac_associate.c mac/zb_ns3.c \
+            mac/mac_data.c mac/mac_cr_data.c mac/mac_common.c mac/mac_routines.c \
+            mac/zb_uz2x_common.c
 
+mac_OBJS = ${mac_SRCS:.c=.o}
 
-SRCS = mac.c mac_cr_coordinator.c mac_fcs.c zb_uz2400.c mac_scan.c mac_cr_associate.c mac_associate.c zb_ns3.c mac_data.c mac_cr_data.c mac_common.c mac_routines.c zb_uz2x_common.c
-
-
-all: $(MAC_LIB) $(MAC_LIB_ED)
-
-$(MAC_LIB) : $(OBJS)
+mac.a: $(mac_OBJS)
 	$(MAKE_LIB)
 
-$(MAC_LIB_ED) : $(OBJS_ED)
-	$(MAKE_LIB)
+zboss_LIBS += mac.a

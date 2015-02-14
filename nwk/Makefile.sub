@@ -43,18 +43,17 @@
 #* ClarIDy/UBEC/DSR.                                                        *
 #*                                                                          *
 #****************************************************************************
-# PURPOSE: Makefile for unix osif
+# PURPOSE: Makefile for NWK layer
 #*/
 
-BUILD_HOME=../..
-include $(BUILD_HOME)/Options
+nwk_SRCS += nwk/nwk_main.c nwk/nwk_nlme.c nwk/nwk_discovery.c nwk/nwk_formation.c \
+            nwk/nwk_cr_formation.c nwk/nwk_cr_permit_join.c nwk/nwk_cr_join.c nwk/nwk_join.c \
+            nwk/nwk_neighbor.c nwk/nwk_cr_route_discovery.c nwk/nwk_address_assign.c \
+            nwk/nwk_cr_tree_routing.c nwk/nwk_cr_mesh_routing.c nwk/nwk_panid_conflict.c
 
-SRCS = zb_trace_unix.c zb_mac_transport_linux_pipes.c zb_mac_transport_linux_spidev.c
+nwk_OBJS = ${nwk_SRCS:.c=.o}
 
-all: $(OSIF_LIB) $(OSIF_LIB_ED)
-
-$(OSIF_LIB) : $(OBJS)
+nwk.a: $(nwk_OBJS)
 	$(MAKE_LIB)
 
-$(OSIF_LIB_ED) : $(OBJS_ED)
-	$(MAKE_LIB)
+zboss_LIBS += nwk.a

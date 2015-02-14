@@ -43,18 +43,8 @@
 #* ClarIDy/UBEC/DSR.                                                        *
 #*                                                                          *
 #****************************************************************************
-# PURPOSE: Makefile for common utilities
+# PURPOSE: Makefile for unix osif
 #*/
 
-BUILD_HOME=..
-include $(BUILD_HOME)/Options
-
-SRCS = zb_debug.c zb_scheduler.c zb_bufpool.c zb_address.c zb_init.c zb_bufpool_init.c zb_scheduler_init.c zb_time.c zb_ib.c zb_random.c
-
-all: $(COMMON_LIB) $(COMMON_LIB_ED)
-
-$(COMMON_LIB) : $(OBJS)
-	$(MAKE_LIB)
-
-$(COMMON_LIB_ED) : $(OBJS_ED)
-	$(MAKE_LIB)
+zboss_SRCS += osif/unix/zb_trace_unix.c osif/unix/zb_mac_transport_linux_pipes.c \
+              osif/unix/zb_mac_transport_linux_spidev.c

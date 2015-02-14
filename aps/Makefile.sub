@@ -43,15 +43,16 @@
 #* ClarIDy/UBEC/DSR.                                                        *
 #*                                                                          *
 #****************************************************************************
-# PURPOSE: Makefile for 8051 osif
+#PURPOSE:
 #*/
 
-BUILD_HOME=../..
-include $(BUILD_HOME)/Options
+aps_SRCS := aps/aps_main.c aps/aps_dups.c aps/aps_bind.c aps/aps_commands.c aps/aps_nwk_confirm.c
 
-SRCS = zb_8051_nvram.c zb_8051_serial.c zb_8051_serial_init.c zb_8051_spi.c zb_8051_spi_init.c zb_8051_xram.c zb_mac_transport_8051_direct.c zb_mac_transport_8051_ser.c zb_mac_transport_8051_spi.c zb_time_8051.c zb_time_8051_init.c zb_trace_8051.c zb_uz2400_common.c 
+aps_OBJS := $(aps_SRCS:.c=.o)
 
-all: $(OSIF_LIB)
+-include $(aps_OBJS:.o=.d)
 
-$(OSIF_LIB) : $(OBJS)
+aps/aps.a: $(aps_OBJS)
 	$(MAKE_LIB)
+
+zboss_LIBS += aps/aps.a

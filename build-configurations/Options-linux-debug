@@ -59,7 +59,7 @@ LD      =       ld
 
 #MEMDEBUG      = -lefence
 #MEMDEBUG      = -ldl -lccmalloc /usr/lib/ccmalloc-g++.o -lccmalloc
-MEMDEBUG      = 
+MEMDEBUG      =
 
 
 #
@@ -87,6 +87,7 @@ DEFINES = $(PLATFORM_DEFINES) $(DEBUG_DEFINES)
 
 CFLAGS = $(CFLAGS_BUILD_CFG) $(CFLAGS_USER) -pipe $(WARN_OPTIONS) -fno-strict-aliasing $(WERROR)
 CXXFLAGS = $(CFLAGS_BUILD_CFG) $(CFLAGS_USER) -pipe $(WARN_OPTIONS_CXX) -fno-strict-aliasing $(WERROR)
+INCPATH = -Iosif/include -Iinclude
 
 DEPSWITCH      = -MM
 AR	=	ar
@@ -105,121 +106,14 @@ LINK_BINARY_CXX = $(CXX) -g $(PROF_FLAG) -o $@ $^ $(MEMDEBUG) -lpthread $(LINK_F
 # Implicit rules
 #
 
-OBJ_SUFFIX=.o
-EXE=
-OBJS = ${SRCS:.c=.o}
-OBJS_ED = ${SRCS:.c=.ed.o}
+.SUFFIXES: .c .o
 
-.SUFFIXES: .cpp .c .o .ed.o
-
-.cpp.o:
-	$(CXX) -c $(CXXFLAGS) $(DEFINES) $(INCPATH) -o $@ $<
-
+# Dependency generation is explained at http://scottmcpeak.com/autodepend/autodepend.html
 .c.o:
 	$(CC) -c $(CFLAGS) $(DEFINES) $(INCPATH) -o $@ $<
-
-.c.ed.o:
-	$(CC) -c $(CFLAGS) $(DEFINES) -DZB_ED_ROLE $(INCPATH) -o $@ $<
-
-bldall : all
-
-clean: doclean
-
-doclean:
-	$(RM) *.o *.a core core.* vgcore.* *~ */*.o src/*~ src/*.o include/*~ $(BINS) $(OTHERS_CLEAN) $(TMP_SRCS)
-
-PRETEST = echo
-
-test:
-	$(RM) *.log
-	@for T in $(BINS_TEST) ; do \
-		echo "Running test $$T ..." ; \
-		[ A"$(PRETEST)" = A ] || $(PRETEST) ; \
-		$(RM) *.log ; \
-		./$$T ; \
-		if test $$? -ne 0; then \
-			echo "Error in test $$T" ; \
-			exit -1 ; \
-		fi ; \
-		echo "ok" ; echo "" ; \
-	done
-
-rebuild: clean all
-
-
-depend : $(SRCS)
-	[ A"$(FAKE_DEPS)" = A ] || touch $(FAKE_DEPS)
-	[ A"$(SRCS)" = A ] ||\
-	$(CC) $(INCPATH) $(DEFINES) $(DEPSWITCH) $(SRCS) >> $(BUILD_HOME)/deps
-
-# object dependencies
-include $(BUILD_HOME)/deps
-include $(BUILD_HOME)/Platform
-
-#
-# Modules definition: Libs & Includes
-#
-
-# logger
-COMMON_LIB = $(BUILD_HOME)/common/libcommon.a
-COMMON_INC = $(BUILD_HOME)/include
-COMMON_LIB_ED = $(BUILD_HOME)/common/libcommon.ed.a
-
-# osif
-OSIF_INC = $(BUILD_HOME)/osif/include
-OSIF_LIB = $(BUILD_HOME)/osif/unix/libosif.a
-OSIF_LIB_ED = $(BUILD_HOME)/osif/unix/libosif.ed.a
-
-# MAC
-MAC_LIB = $(BUILD_HOME)/mac/libmac.a
-MAC_LIB_ED = $(BUILD_HOME)/mac/libmac.ed.a
-
-# NWK
-NWK_LIB = $(BUILD_HOME)/nwk/libnwk.a
-NWK_LIB_ED = $(BUILD_HOME)/nwk/libnwk.ed.a
-
-# APS
-APS_LIB = $(BUILD_HOME)/aps/libaps.a
-APS_LIB_ED = $(BUILD_HOME)/aps/libaps.ed.a
-
-# ZDO
-ZDO_LIB = $(BUILD_HOME)/zdo/libzdo.a
-ZDO_LIB_ED = $(BUILD_HOME)/zdo/libzdo.ed.a
-
-# Security
-SECUR_LIB = $(BUILD_HOME)/secur/libsec.a
-SECUR_LIB_ED = $(BUILD_HOME)/secur/libsec.ed.a
-
-# ZCL
-ZCL_LIB = $(BUILD_HOME)/zcl/libzcl.a
-ZCL_LIB_ED = $(BUILD_HOME)/zcl/libzcl.ed.a
-
-#
-# #####
-#
-
-INCPATH += -I$(OSIF_INC) -I$(COMMON_INC)
-
-LIBS_WO_APS= \
-	$(COMMON_LIB) \
-	$(OSIF_LIB) \
-	$(MAC_LIB) \
-	$(NWK_LIB)
-
-LIBS = \
-	$(LIBS_WO_APS) \
-	$(SECUR_LIB) \
-	$(APS_LIB) \
-	$(ZDO_LIB)
-
-LIBS_WO_APS_ED= \
-	$(COMMON_LIB_ED) \
-	$(OSIF_LIB_ED) \
-	$(MAC_LIB_ED) \
-	$(NWK_LIB_ED)
-
-LIBS_ED = \
-	$(LIBS_WO_APS_ED) \
-	$(SECUR_LIB_ED) \
-	$(APS_LIB_ED) \
-	$(ZDO_LIB_ED)
+	$(CC) $(CFLAGS) $(INCPATH) $(DEFINES) $(DEPSWITCH) $< > $*.d
+	@mv -f $*.d $*.d.tmp
+	@sed -e 's|.*:|$*.o:|' < $*.d.tmp > $*.d
+	@sed -e 's/.*://' -e 's/\\$$//' < $*.d.tmp | fmt -1 | \
+	  sed -e 's/^ *//' -e 's/$$/:/' >> $*.d
+	@rm -f $*.d.tmp

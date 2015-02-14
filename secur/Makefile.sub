@@ -43,19 +43,8 @@
 #* ClarIDy/UBEC/DSR.                                                        *
 #*                                                                          *
 #****************************************************************************
-# PURPOSE: Makefile for common utilities
+# PURPOSE: Makefile for NWK layer
 #*/
 
-BUILD_HOME=..
-include $(BUILD_HOME)/Options
-
-SRCS = zdo_app.c zdo_rx.c zdo_disc_cli.c af_rx.c zdo_disc_srv.c af_descriptor.c zdo_common.c zdo_nwk_manage_cli.c zdo_nwk_manage_srv.c \
-	zdo_channel_manager.c test_profile.c zdo_bind_manage.c
-
-all: $(ZDO_LIB) $(ZDO_LIB_ED)
-
-$(ZDO_LIB) : $(OBJS)
-	$(MAKE_LIB)
-
-$(ZDO_LIB_ED) : $(OBJS_ED)
-	$(MAKE_LIB)
+zboss_SRCS += secur/secur_ccm.c secur/apsme_secur.c secur/zdo_secur.c \
+              secur/nwk_secur.c secur/aps_secur.c

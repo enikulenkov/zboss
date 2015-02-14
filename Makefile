@@ -43,7 +43,7 @@
 #* ClarIDy/UBEC/DSR.                                                        *
 #*                                                                          *
 #****************************************************************************
-#PURPOSE: 
+#PURPOSE:
 #*/
 
 #
@@ -56,40 +56,32 @@
 # Separate makefile includes to Options and Platform.
 # Options includes Platform, so it is the only file to be included from non-root makefiles
 #
+include Options
 include Platform
 
-all: bldall
+all: deps zboss.a
 
-clean: cleandep
+MODULES := common mac nwk osif/$(PLATFORM) secur aps zdo
 
-bldall clean depend :
-	if [ -d osif/$(PLATFORM) ] ; then cd osif/$(PLATFORM) && $(MAKE) $@ ; else cd osif/unix  && $(MAKE) $@ ; fi
-	cd common                 && $(MAKE) $@
-	cd mac                    && $(MAKE) $@
-	cd nwk                    && $(MAKE) $@
-	cd aps                    && $(MAKE) $@
-	cd zdo                    && $(MAKE) $@
-	cd secur                  && $(MAKE) $@
-	cd tests                  && $(MAKE) $@
-	cd devtools               && $(MAKE) $@	
+zboss_SRCS    :=
+zboss_LIBS    :=
 
-test:
-	cd tests                  && $(MAKE) $@
+# include the description for each module
+include $(patsubst %, %/Makefile.sub, $(MODULES))
 
-bldall : deps
+OBJ    := $(patsubst %.c, %.o, $(filter %.c, $(zboss_SRCS)))
 
-depend : cleandep deps
+zboss.a : $(OBJ) $(zboss_LIBS)
+	$(MAKE_LIB)
 
-deps:
-	> deps
-	make depend
+clean:
+	for i in $(MODULES); \
+		do rm -f $$i/*.o $$i/*.d $$i/*.a;\
+	done
 
-cleandep :
-	> deps
 
 clobber: clean
-	$(FIND) . \( -name '*~' -o -name '.#*' -o -name 'core' -o -name 'core.*' -o -type l -a -name Makefile \) -exec rm {} \;
-	rm -f deps  TAGS tags BROWSE
+	rm -f TAGS tags BROWSE
 
 etags:
 	($(FIND) . -name \*.[ch] -print) | grep -v ".*~" | etags -
@@ -97,24 +89,9 @@ etags:
 ctags:
 	($(FIND) . -name \*.[ch] -print) | grep -v ".*~" | ctags -I ZB_CALLBACK,ZB_SDCC_REENTRANT,ZB_SDCC_BANKED -L -
 
-rebuild: makefile_links clean depend all
-
-# First remove all stale makefiles, then link makefiles from mk/platform
-makefile_links:
-	$(FIND) . -type d -name mk | sed -e 's/\/mk//' | while read a ;		     \
-        do	    	    	       	      	       	       	      		     \
-	  rm -f $$a/Makefile ;							     \
-	  if [ -f $$a/mk/$(PLATFORM)/Makefile ] ; then				     \
-            eval $(LN)mk/$(PLATFORM)/Makefile $$a/Makefile ;		     		     \
-	  else									     \
-	    eval $(LN)mk/unix/Makefile $$a/Makefile ; 			     		     \
-	  fi ;									     \
-        done 	   			      		     	      		     \
-
-test:
+rebuild: clean all
 
 docs: doc_api doc_int
-
 
 doc_int:
 	rm -rf doxydoc_int

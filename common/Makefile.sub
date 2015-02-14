@@ -43,18 +43,9 @@
 #* ClarIDy/UBEC/DSR.                                                        *
 #*                                                                          *
 #****************************************************************************
-#PURPOSE:
+# PURPOSE: Makefile for common utilities
 #*/
 
-BUILD_HOME=..
-include $(BUILD_HOME)/Options
-
-SRCS = aps_main.c aps_dups.c aps_bind.c aps_commands.c aps_nwk_confirm.c 
-
-all: $(APS_LIB) $(APS_LIB_ED)
-
-$(APS_LIB) : $(OBJS)
-	$(MAKE_LIB)
-
-$(APS_LIB_ED) : $(OBJS_ED)
-	$(MAKE_LIB)
+zboss_SRCS += common/zb_debug.c common/zb_scheduler.c common/zb_bufpool.c \
+              common/zb_address.c common/zb_init.c common/zb_bufpool_init.c \
+              common/zb_scheduler_init.c common/zb_time.c common/zb_ib.c common/zb_random.c

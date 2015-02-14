@@ -43,18 +43,16 @@
 #* ClarIDy/UBEC/DSR.                                                        *
 #*                                                                          *
 #****************************************************************************
-# PURPOSE: Makefile for NWK layer
+# PURPOSE: Makefile for common utilities
 #*/
 
-BUILD_HOME=..
-include $(BUILD_HOME)/Options
+zdo_SRCS += zdo/zdo_app.c zdo/zdo_rx.c zdo/zdo_disc_cli.c zdo/af_rx.c zdo/zdo_disc_srv.c \
+            zdo/af_descriptor.c zdo/zdo_common.c zdo/zdo_nwk_manage_cli.c \
+            zdo/zdo_nwk_manage_srv.c zdo/zdo_channel_manager.c zdo/test_profile.c \
+            zdo/zdo_bind_manage.c
+zdo_OBJS = ${zdo_SRCS:.c=.o}
 
-SRCS = nwk_main.c nwk_nlme.c nwk_discovery.c nwk_formation.c nwk_cr_formation.c nwk_cr_permit_join.c nwk_cr_join.c nwk_join.c nwk_neighbor.c nwk_cr_route_discovery.c nwk_address_assign.c nwk_cr_tree_routing.c nwk_cr_mesh_routing.c nwk_panid_conflict.c
-
-all: $(NWK_LIB) $(NWK_LIB_ED)
-
-$(NWK_LIB) : $(OBJS)
+zdo.a: $(zdo_OBJS)
 	$(MAKE_LIB)
 
-$(NWK_LIB_ED) : $(OBJS_ED)
-	$(MAKE_LIB)
+zboss_LIBS += zdo.a
