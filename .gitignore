@@ -41,6 +41,7 @@ Platform
 Options
 *.o
 *.a
+*.d
 devtools/dump_converter/dump_converter
 devtools/network_simulator/network_simulator
 tests/nwk_leave/zdo_start_zc
