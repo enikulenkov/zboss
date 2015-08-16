@@ -183,7 +183,7 @@ void data_indication(zb_uint8_t param) ZB_CALLBACK
   zb_buf_t *asdu = (zb_buf_t *)ZB_BUF_FROM_REF(param);
 
   /* Remove APS header from the packet */
-  ZB_APS_HDR_CUT(asdu, ptr);
+  ptr = (zb_uint8_t *)ZB_APS_HDR_CUT(asdu);
 
   TRACE_MSG(TRACE_APS3, "data_indication: packet %p len %d handle 0x%x", (FMT__P_D_D,
                          asdu, (int)ZB_BUF_LEN(asdu), asdu->u.hdr.status));

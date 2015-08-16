@@ -64,11 +64,25 @@ set = $(eval $1__$2 := $3)
 get = $($1__$2)
 
 # ----------------------------------------------------------------------------
-# Generates rules for building object files for given configuration
-# Arguments: 1: Name of configuration
+# Generate rules for building object files for given configuration
+# Arguments: 1: Configuration prefix
 # Returns:   Nothing
 # ----------------------------------------------------------------------------
 gen_obj_rules = $(foreach obj, $(zboss_$1_OBJS), $(eval $(call obj_rule,$(obj),$1)))
+
+# ----------------------------------------------------------------------------
+# Generate rules for building test object files for given configuration
+# Arguments: 1: Configuration prefix
+# Returns:   Nothing
+# ----------------------------------------------------------------------------
+gen_test_obj_rules = $(foreach obj, $(test_$1_OBJS), $(eval $(call obj_rule,$(obj),$1)))
+
+# ----------------------------------------------------------------------------
+# Generate rules for building test object files for given configuration
+# Arguments: 1: Configuration prefix
+# Returns:   Nothing
+# ----------------------------------------------------------------------------
+gen_test_deps = $(foreach obj, $(test_$1_OBJS), $(obj:.o=.d))
 
 # ----------------------------------------------------------------------------
 # Convert path of source file to path of corresponding object file
@@ -99,6 +113,14 @@ src2dep = $(dir $1)$(OBJ_DIR)/$(strip $(patsubst %.c, %.$2.d, $(notdir $1)))
 obj2src = $(patsubst %/$(OBJ_DIR)/, %/$(strip $(patsubst %.$2.o, %.c, $(notdir $1))), $(dir $1))
 
 # ----------------------------------------------------------------------------
+# Get object files for list of sources
+# Arguments: 1: Path to object file
+#            2: Name of configuration
+# Returns:   Path to source file
+# ----------------------------------------------------------------------------
+objs4srcs = $(foreach src, $1, $(call src2obj,$(src),$2))
+
+# ----------------------------------------------------------------------------
 # Add configuration to list of known configurations. Configuration consists
 # of two components: header file that defines configuration and configuration
 # prefix used in names of object files.
@@ -109,7 +131,7 @@ obj2src = $(patsubst %/$(OBJ_DIR)/, %/$(strip $(patsubst %.$2.o, %.c, $(notdir $
 define add_config
 $(call set,conf_h2n,$1,$2)
 $(call set,conf_n2h,$2,$1)
-zboss_CONFS += $1
+zboss_CONFS += $2
 endef
 
 # ----------------------------------------------------------------------------
@@ -125,13 +147,21 @@ endef
 # ----------------------------------------------------------------------------
 # Define rule to build given object file. Note, that all .c to .o rules are
 # explicit. Dependency generation is explained at
-# http://scottmcpeak.com/autodepend/autodepend.html.
+# http://scottmcpeak.com/autodepend/autodepend.html. Before compiling current
+# zb_config.h is checked for compliance with provided configuration.
+# Configuration header is replaced if mismatch occured.
 # Arguments: 1: Path to object file
 #            2: Configuration prefix
 # Returns:   Nothing
 # ----------------------------------------------------------------------------
 define obj_rule
-$1: $(call obj2src,$1,$2) | mk_obj_dir.$(dir $1) setconf.$2
+$1: $(call obj2src,$1,$2) | mk_obj_dir.$(dir $1)
+	$(Q)CONF_PATH=$(call get,conf_n2h,$2) ; \
+	if [ \( ! -L include/zb_config.h -o \
+	        x`readlink include/zb_config.h` != x$$$$CONF_PATH \) -a \
+ 	      -f $$$$CONF_PATH ] ; then \
+		ln -sf ../$$$$CONF_PATH include/zb_config.h ; \
+	fi;
 	@echo CC\($2\) $$<
 	$(Q)$(CC) -c $(CFLAGS) $(DEFINES) $(INCPATH) -o $$@ $$<
 	@DEP=`echo $$@ | sed -e 's/\.o$$$$/.d/'` ;\
@@ -148,4 +178,4 @@ endef
 # Arguments: 1: Configuration header file
 # Returns:   Library name (not full path)
 # ----------------------------------------------------------------------------
-libzboss_name = libzboss.$(call get,conf_h2n,$1).a
+libzboss_name = libzboss.$1.a

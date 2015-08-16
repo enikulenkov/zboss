@@ -50,16 +50,27 @@ include Options
 include Platform
 include Makefile.helpers
 
-.PHONY: tests setconf.%
+.PHONY: tests mk_obj_dir.%
 
 all: libs tests
 
 MODULES := common mac nwk osif/$(PLATFORM) secur aps zdo
-#TESTS   := tests/aib_nib_pib_test
+TESTS   := tests/aib_nib_pib_test \
+	         tests/aps_dup_reject \
+	         tests/aps_group \
+					 tests/certification/TP_APS_BV-09 \
+					 tests/certification/TP_APS_BV-12-I \
+					 tests/certification/TP_APS_BV-27-I \
+					 tests/certification/TP_APS_BV-29-I \
+					 tests/certification/TP_APS_BV-35-I \
+					 tests/certification/TP_NWK_BV-12 \
+					 tests/certification/TP_PRO_BV-26 \
+					 tests/certification/TP_PRO_BV-35 \
+					 tests/certification/TP_PRO_BV-36
 
+zboss_CONFS   :=
 zboss_SRCS    :=
 zboss_TESTS   :=
-zboss_CONFS   :=
 
 OBJ_DIR := .objs
 
@@ -70,37 +81,34 @@ $(eval $(call add_config,include/zb_config.ze.h,ze))
 
 # include Makefile for each module
 include $(patsubst %, %/Makefile.sub, $(MODULES))
-#include $(patsubst %, %/Makefile.sub, $(TESTS))
+include $(patsubst %, %/Makefile.sub, $(TESTS))
 
 # Libs to build. One for each configuration. 
 zboss_LIBS := $(foreach conf, $(zboss_CONFS), $(call libzboss_name,$(conf)))
 
 # Set variables containing object files and deps files per configuration
-$(foreach conf, $(zboss_CONFS), $(eval $(call config_vars,$(call get,conf_h2n,$(conf)))))
+$(foreach conf, $(zboss_CONFS), $(eval $(call config_vars,$(conf))))
 # Generate rules for building every object file
-$(foreach conf, $(zboss_CONFS), $(call gen_obj_rules,$(call get,conf_h2n,$(conf))))
+$(foreach conf, $(zboss_CONFS), $(call gen_obj_rules,$(conf)))
 # Include deps files
--include $(foreach conf, $(zboss_CONFS), $(zboss_$(call get,conf_h2n,$(conf))_DEPS))
+-include $(foreach conf, $(zboss_CONFS), $(zboss_$(conf)_DEPS))
 
-#tests: $(zboss_TESTS)
+# Generate rules for building every test object file
+$(foreach conf, $(zboss_CONFS), $(call gen_test_obj_rules,$(conf)))
+# Include deps for tests
+test_DEPS := $(foreach conf, $(zboss_CONFS), $(call gen_test_deps,$(conf)))
+-include $(test_DEPS)
+
+tests: $(zboss_TESTS)
 
 libs: $(zboss_LIBS)
-
-# Given name of configuration copy its config header file as include/zb_config.h
-setconf.%:
-	$(Q)CONF_PATH=$(call get,conf_n2h,$*) ; \
-	if [ \( ! -L include/zb_config.h -o \
-	        x`readlink include/zb_config.h` != x$$CONF_PATH \) -a \
- 	      -f $$CONF_PATH ] ; then \
-		ln -sf ../$$CONF_PATH include/zb_config.h ; \
-	fi;
 
 # Create directory for object files
 mk_obj_dir.%:
 	$(Q)mkdir -p $*
 
 .SECONDEXPANSION:
-libzboss.%.a: $$(zboss_$$*_OBJS) | setconf.$$*
+libzboss.%.a: $$(zboss_$$*_OBJS)
 	@echo AR $@
 	$(Q)$(AR) r $@ $^
 

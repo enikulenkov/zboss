@@ -43,60 +43,32 @@
 #* ClarIDy/UBEC/DSR.                                                        *
 #*                                                                          *
 #****************************************************************************
-#PURPOSE: Include file for Zigbee build under Unix
+# PURPOSE: Intra PAN portability test.
 #*/
 
-CFLAGS=$(CFLAGS_DEBUG)
+zdo_ipan_portability_SRCS1 := tests/zdo_intra_pan_portability/intra_pan_portability_zc.c
+zdo_ipan_portability_OBJS1 := $(call objs4srcs,$(zdo_ipan_portability_SRCS1),zc)
+test_zc_OBJS += $(zdo_ipan_portability_OBJS1)
 
-PLATFORM_DEFINES=-DZB_PLATFORM_LINUX_PC32
+zdo_ipan_portability_SRCS2 := tests/zdo_intra_pan_portability/intra_pan_portability_ze.c
+zdo_ipan_portability_OBJS2 := $(call objs4srcs,$(zdo_ipan_portability_SRCS2),ze)
+test_ze_OBJS += $(zdo_ipan_portability_OBJS2)
 
-####### Common options
+zdo_ipan_portability_SRCS3 := tests/zdo_intra_pan_portability/intra_pan_portability_zr.c
+zdo_ipan_portability_OBJS3 := $(call objs4srcs,$(zdo_ipan_portability_SRCS3),zc)
+test_zc_OBJS += $(zdo_ipan_portability_OBJS3)
 
-ifneq ($(V),1)
-	Q := @
-endif
+zdo_ipan_portability_BIN1 := tests/zdo_intra_pan_portability/intra_pan_portability_zc$(EXE)
+zdo_ipan_portability_BIN2 := tests/zdo_intra_pan_portability/intra_pan_portability_ze$(EXE)
+zdo_ipan_portability_BIN2 := tests/zdo_intra_pan_portability/intra_pan_portability_zr$(EXE)
 
-CC	=	gcc
-#CC	=	cxref-cc
-CXX	=	g++
-LD      =       ld
+$(zdo_ipan_portability_BIN1) : $(zdo_ipan_portability_OBJS1)  $(call libzboss_name,zc)
+	$(LINK_BINARY)
 
-#MEMDEBUG      = -lefence
-#MEMDEBUG      = -ldl -lccmalloc /usr/lib/ccmalloc-g++.o -lccmalloc
-MEMDEBUG      =
+$(zdo_ipan_portability_BIN2) : $(zdo_ipan_portability_OBJS2)  $(call libzboss_name,ze)
+	$(LINK_BINARY)
 
+$(zdo_ipan_portability_BIN3) : $(zdo_ipan_portability_OBJS3)  $(call libzboss_name,zc)
+	$(LINK_BINARY)
 
-#
-# Configure trace by changing ZB_TRACE_MASK (one bit per layer)
-# and ZB_TRACE_LEVEL (messages with layer > ZB_TRACE_LEVEL are unvisible).
-# Do not define ZB_TRACE_LEVEL to switch off trace.
-#
-TRACE_DEFINES = -DZB_TRACE_LEVEL=4 -DZB_TRACE_MASK=-1
-
-DEBUG_DEFINES = -DDEBUG $(TRACE_DEFINES)
-
-DEBUG_CFLAGS   = -g
-
-RELEASE_CFLAGS  = -O3
-
-PROFILE_CFLAGS  = -g -O3 -pg
-
-WERROR = -Werror
-WARN_OPTIONS = -W -Wall -Wpointer-arith -Wcast-align -std=gnu99 -Wno-format-zero-length  -Wno-format-zero-length -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -Wno-unused-but-set-variable
-WARN_OPTIONS_CXX = -W -Wall -Wpointer-arith -Wcast-align -pedantic
-
-CFLAGS_BUILD_CFG = $(DEBUG_CFLAGS)
-
-DEFINES = $(PLATFORM_DEFINES) $(DEBUG_DEFINES)
-
-CFLAGS = $(CFLAGS_BUILD_CFG) $(CFLAGS_USER) -pipe $(WARN_OPTIONS) -fno-strict-aliasing $(WERROR)
-CXXFLAGS = $(CFLAGS_BUILD_CFG) $(CFLAGS_USER) -pipe $(WARN_OPTIONS_CXX) -fno-strict-aliasing $(WERROR)
-INCPATH = -Iosif/include -Iinclude
-
-DEPSWITCH      = -MM
-AR	=	ar
-
-PROF_FLAG=
-
-LINK_BINARY = $(CC) $(PROF_FLAG) -o $@ $^ $(MEMDEBUG) $(LINK_FLAGS) $(LIBS)
-LINK_BINARY_CXX = $(CXX) -g $(PROF_FLAG) -o $@ $^ $(MEMDEBUG) -lpthread $(LINK_FLAGS)
+zboss_TESTS += $(zdo_ipan_portability_BIN1) $(zdo_ipan_portability_BIN2) $(zdo_ipan_portability_BIN3)

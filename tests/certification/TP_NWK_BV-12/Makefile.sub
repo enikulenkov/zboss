@@ -43,60 +43,32 @@
 #* ClarIDy/UBEC/DSR.                                                        *
 #*                                                                          *
 #****************************************************************************
-#PURPOSE: Include file for Zigbee build under Unix
+# PURPOSE: TP/NWK/BV-12 NWK Maximum Depth.
 #*/
 
-CFLAGS=$(CFLAGS_DEBUG)
+TP_NWK_BV-12_SRCS1 := tests/certification/TP_NWK_BV-12/tp_nwk_bv_12_ZC.c
+TP_NWK_BV-12_OBJS1 := $(call objs4srcs,$(TP_NWK_BV-12_SRCS1),zc)
+test_zc_OBJS += $(TP_NWK_BV-12_OBJS1)
 
-PLATFORM_DEFINES=-DZB_PLATFORM_LINUX_PC32
+TP_NWK_BV-12_SRCS2 := tests/certification/TP_NWK_BV-12/tp_nwk_bv_12_ZR1.c
+TP_NWK_BV-12_OBJS2 := $(call objs4srcs,$(TP_NWK_BV-12_SRCS2),zc)
+test_zc_OBJS += $(TP_NWK_BV-12_OBJS2)
 
-####### Common options
+TP_NWK_BV-12_SRCS3 := tests/certification/TP_NWK_BV-12/tp_nwk_bv_12_ZR.c
+TP_NWK_BV-12_OBJS3 := $(call objs4srcs,$(TP_NWK_BV-12_SRCS3),zc)
+test_zc_OBJS += $(TP_NWK_BV-12_OBJS3)
 
-ifneq ($(V),1)
-	Q := @
-endif
+TP_NWK_BV_12_BIN1 := tests/certification/TP_NWK_BV-12/tp_nwk_bv_12_ZC$(EXE)
+TP_NWK_BV_12_BIN2 := tests/certification/TP_NWK_BV-12/tp_nwk_bv_12_ZR1$(EXE)
+TP_NWK_BV_12_BIN3 := tests/certification/TP_NWK_BV-12/tp_nwk_bv_12_ZR$(EXE)
 
-CC	=	gcc
-#CC	=	cxref-cc
-CXX	=	g++
-LD      =       ld
+$(TP_NWK_BV_12_BIN1) : $(TP_NWK_BV-12_OBJS1)  $(call libzboss_name,zc)
+	$(LINK_BINARY)
 
-#MEMDEBUG      = -lefence
-#MEMDEBUG      = -ldl -lccmalloc /usr/lib/ccmalloc-g++.o -lccmalloc
-MEMDEBUG      =
+$(TP_NWK_BV_12_BIN2) : $(TP_NWK_BV-12_OBJS2)  $(call libzboss_name,zc)
+	$(LINK_BINARY)
 
+$(TP_NWK_BV_12_BIN3) : $(TP_NWK_BV-12_OBJS3)  $(call libzboss_name,zc)
+	$(LINK_BINARY)
 
-#
-# Configure trace by changing ZB_TRACE_MASK (one bit per layer)
-# and ZB_TRACE_LEVEL (messages with layer > ZB_TRACE_LEVEL are unvisible).
-# Do not define ZB_TRACE_LEVEL to switch off trace.
-#
-TRACE_DEFINES = -DZB_TRACE_LEVEL=4 -DZB_TRACE_MASK=-1
-
-DEBUG_DEFINES = -DDEBUG $(TRACE_DEFINES)
-
-DEBUG_CFLAGS   = -g
-
-RELEASE_CFLAGS  = -O3
-
-PROFILE_CFLAGS  = -g -O3 -pg
-
-WERROR = -Werror
-WARN_OPTIONS = -W -Wall -Wpointer-arith -Wcast-align -std=gnu99 -Wno-format-zero-length  -Wno-format-zero-length -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -Wno-unused-but-set-variable
-WARN_OPTIONS_CXX = -W -Wall -Wpointer-arith -Wcast-align -pedantic
-
-CFLAGS_BUILD_CFG = $(DEBUG_CFLAGS)
-
-DEFINES = $(PLATFORM_DEFINES) $(DEBUG_DEFINES)
-
-CFLAGS = $(CFLAGS_BUILD_CFG) $(CFLAGS_USER) -pipe $(WARN_OPTIONS) -fno-strict-aliasing $(WERROR)
-CXXFLAGS = $(CFLAGS_BUILD_CFG) $(CFLAGS_USER) -pipe $(WARN_OPTIONS_CXX) -fno-strict-aliasing $(WERROR)
-INCPATH = -Iosif/include -Iinclude
-
-DEPSWITCH      = -MM
-AR	=	ar
-
-PROF_FLAG=
-
-LINK_BINARY = $(CC) $(PROF_FLAG) -o $@ $^ $(MEMDEBUG) $(LINK_FLAGS) $(LIBS)
-LINK_BINARY_CXX = $(CXX) -g $(PROF_FLAG) -o $@ $^ $(MEMDEBUG) -lpthread $(LINK_FLAGS)
+zboss_TESTS += $(TP_NWK_BV_12_BIN1) $(TP_NWK_BV_12_BIN2) $(TP_NWK_BV_12_BIN3)

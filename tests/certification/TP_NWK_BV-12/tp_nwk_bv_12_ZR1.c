@@ -55,8 +55,6 @@ correctly after joining at maximum depth (Pro Max depth=15; OK to join at depth 
 #include "zb_aps.h"
 #include "zb_zdo.h"
 
-#warning PLEASE CHANGE AN ADDRESS TO (0x00,0x00,0x00, MAX_DEPTH, 0x00,0x00,0x00)
-
 /* For NS build first ieee addr byte should be unique */
 #ifdef ZB_NS_BUILD
 zb_ieee_addr_t g_ieee_addr = {0x02, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00};
