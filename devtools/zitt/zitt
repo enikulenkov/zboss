@@ -114,7 +114,7 @@ def update_statistics(stats, test_res):
 
     for instance_res in test_res['instances']:
         errors_cnt = len(instance_res['errors'])
-        if instance_res['dev_return_code'] != 0:
+        if instance_res['dev_return_code'] != '0':
             test_failed = True
         if errors_cnt:
             stats['errors_count'] = stats['errors_count'] + errors_cnt
