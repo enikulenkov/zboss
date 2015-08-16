@@ -101,24 +101,3 @@ PROF_FLAG=
 LINK_BINARY = $(CC) $(PROF_FLAG) -o $@ $^ $(MEMDEBUG) -lpthread $(LINK_FLAGS) $(LIBS) $(LIBS)
 LINK_BINARY_ED = $(CC) $(PROF_FLAG) -o $@ $^ $(MEMDEBUG) -lpthread $(LINK_FLAGS) $(LIBS_ED) $(LIBS_ED)
 LINK_BINARY_CXX = $(CXX) -g $(PROF_FLAG) -o $@ $^ $(MEMDEBUG) -lpthread $(LINK_FLAGS)
-
-#
-# Implicit rules
-#
-
-.SUFFIXES: .c .o
-
-# Dependency generation is explained at http://scottmcpeak.com/autodepend/autodepend.html
-.c.o:
-	@echo CC $<
-	$(Q)$(CC) -c $(CFLAGS) $(DEFINES) $(INCPATH) -o $@ $<
-	@$(CC) $(CFLAGS) $(INCPATH) $(DEFINES) $(DEPSWITCH) $< > $*.d
-	@mv -f $*.d $*.d.tmp
-	@sed -e 's|.*:|$*.o:|' < $*.d.tmp > $*.d
-	@sed -e 's/.*://' -e 's/\\$$//' < $*.d.tmp | fmt -1 | \
-	  sed -e 's/^ *//' -e 's/$$/:/' >> $*.d
-	@rm -f $*.d.tmp
-
-%.a:
-	@echo AR $@
-	$(Q)$(AR) r $@ $^

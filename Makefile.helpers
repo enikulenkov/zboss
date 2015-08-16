@@ -1,0 +1,151 @@
+#/***************************************************************************
+#*                      ZBOSS ZigBee Pro 2007 stack                         *
+#*                                                                          *
+#*          Copyright (c) 2012 DSR Corporation Denver CO, USA.              *
+#*                       http://www.dsr-wireless.com                        *
+#*                                                                          *
+#*                            All rights reserved.                          *
+#*          Copyright (c) 2011 ClarIDy Solutions, Inc., Taipei, Taiwan.     *
+#*                       http://www.claridy.com/                            *
+#*                                                                          *
+#*          Copyright (c) 2011 Uniband Electronic Corporation (UBEC),       *
+#*                             Hsinchu, Taiwan.                             *
+#*                       http://www.ubec.com.tw/                            *
+#*                                                                          *
+#*          Copyright (c) 2011 DSR Corporation Denver CO, USA.              *
+#*                       http://www.dsr-wireless.com                        *
+#*                                                                          *
+#*                            All rights reserved.                          *
+#*                                                                          *
+#*                                                                          *
+#* ZigBee Pro 2007 stack, also known as ZBOSS (R) ZB stack is available     *
+#* under either the terms of the Commercial License or the GNU General      *
+#* Public License version 2.0.  As a recipient of ZigBee Pro 2007 stack, you*
+#* may choose which license to receive this code under (except as noted in  *
+#* per-module LICENSE files).                                               *
+#*                                                                          *
+#* ZBOSS is a registered trademark of DSR Corporation AKA Data Storage      *
+#* Research LLC.                                                            *
+#*                                                                          *
+#* GNU General Public License Usage                                         *
+#* This file may be used under the terms of the GNU General Public License  *
+#* version 2.0 as published by the Free Software Foundation and appearing   *
+#* in the file LICENSE.GPL included in the packaging of this file.  Please  *
+#* review the following information to ensure the GNU General Public        *
+#* License version 2.0 requirements will be met:                            *
+#* http://www.gnu.org/licenses/old-licenses/gpl-2.0.html.                   *
+#*                                                                          *
+#* Commercial Usage                                                         *
+#* Licensees holding valid ClarIDy/UBEC/DSR Commercial licenses may use     *
+#* this file in accordance with the ClarIDy/UBEC/DSR Commercial License     *
+#* Agreement provided with the Software or, alternatively, in accordance    *
+#* with the terms contained in a written agreement between you and          *
+#* ClarIDy/UBEC/DSR.                                                        *
+#*                                                                          *
+#****************************************************************************
+# PURPOSE: Different utility functions used by Makefiles
+#*/
+
+# ----------------------------------------------------------------------------
+# Set element in associative array
+# Arguments: 1: Name of associative array
+#            2: The key value to associate
+#            3: The value associated with the key
+# Returns:   Nothing
+# ----------------------------------------------------------------------------
+set = $(eval $1__$2 := $3)
+
+# ----------------------------------------------------------------------------
+# Get element of associative array
+# Arguments: 1: Name of associative array
+#            2: The key to retrieve
+# Returns:   The value stored in the array for that key
+# ----------------------------------------------------------------------------
+get = $($1__$2)
+
+# ----------------------------------------------------------------------------
+# Generates rules for building object files for given configuration
+# Arguments: 1: Name of configuration
+# Returns:   Nothing
+# ----------------------------------------------------------------------------
+gen_obj_rules = $(foreach obj, $(zboss_$1_OBJS), $(eval $(call obj_rule,$(obj),$1)))
+
+# ----------------------------------------------------------------------------
+# Convert path of source file to path of corresponding object file
+# Example: nwk/nwk_join.c -> nwk/.objs/nwk_join.zc.o
+# Arguments: 1: Path to source file
+#            2: Name of configuration
+# Returns:   Path to object file
+# ----------------------------------------------------------------------------
+src2obj = $(dir $1)$(OBJ_DIR)/$(strip $(patsubst %.c, %.$2.o, $(notdir $1)))
+
+# ----------------------------------------------------------------------------
+# Convert path of source file to path of corresponding deps file
+# Example: nwk/nwk_join.c -> nwk/.objs/nwk_join.zc.d
+# Arguments: 1: Path to source file
+#            2: Name of configuration
+# Returns:   Path to deps file
+# ----------------------------------------------------------------------------
+src2dep = $(dir $1)$(OBJ_DIR)/$(strip $(patsubst %.c, %.$2.d, $(notdir $1)))
+
+# ----------------------------------------------------------------------------
+# Convert path of object file to path of corresponding source file.
+# Inversion of src2obj.
+# Example: nwk/.objs/nwk_join.zc.o -> nwk/nwk_join.c
+# Arguments: 1: Path to object file
+#            2: Name of configuration
+# Returns:   Path to source file
+# ----------------------------------------------------------------------------
+obj2src = $(patsubst %/$(OBJ_DIR)/, %/$(strip $(patsubst %.$2.o, %.c, $(notdir $1))), $(dir $1))
+
+# ----------------------------------------------------------------------------
+# Add configuration to list of known configurations. Configuration consists
+# of two components: header file that defines configuration and configuration
+# prefix used in names of object files.
+# Arguments: 1: Path to header configuration file
+#            2: Configuration prefix
+# Returns:   Nothing
+# ----------------------------------------------------------------------------
+define add_config
+$(call set,conf_h2n,$1,$2)
+$(call set,conf_n2h,$2,$1)
+zboss_CONFS += $1
+endef
+
+# ----------------------------------------------------------------------------
+# Define all global variables for configuration (object files and deps files).
+# Arguments: 1: Configuration prefix
+# Returns:   Nothing
+# ----------------------------------------------------------------------------
+define config_vars
+zboss_$1_OBJS := $(foreach src, $(zboss_SRCS), $(call src2obj,$(src),$1))
+zboss_$1_DEPS := $(foreach src, $(zboss_SRCS), $(call src2dep,$(src),$1))
+endef
+
+# ----------------------------------------------------------------------------
+# Define rule to build given object file. Note, that all .c to .o rules are
+# explicit. Dependency generation is explained at
+# http://scottmcpeak.com/autodepend/autodepend.html.
+# Arguments: 1: Path to object file
+#            2: Configuration prefix
+# Returns:   Nothing
+# ----------------------------------------------------------------------------
+define obj_rule
+$1: $(call obj2src,$1,$2) | mk_obj_dir.$(dir $1) setconf.$2
+	@echo CC\($2\) $$<
+	$(Q)$(CC) -c $(CFLAGS) $(DEFINES) $(INCPATH) -o $$@ $$<
+	@DEP=`echo $$@ | sed -e 's/\.o$$$$/.d/'` ;\
+	$(CC) $(CFLAGS) $(INCPATH) $(DEFINES) $(DEPSWITCH) $$< > $$$${DEP} ;\
+	mv -f $$$${DEP} $$$${DEP}.tmp ;\
+	sed -e 's|.*:|$1:|' < $$$${DEP}.tmp > $$$${DEP} ;\
+	sed -e 's/.*://' -e 's/\\$$$$//' < $$$${DEP}.tmp | fmt -1 | \
+		sed -e 's/^ *//' -e 's/$$$$/:/' >> $$$${DEP} ;\
+	rm -f $$$${DEP}.tmp
+endef
+
+# ----------------------------------------------------------------------------
+# Return name of zboss library for given configuration
+# Arguments: 1: Configuration header file
+# Returns:   Library name (not full path)
+# ----------------------------------------------------------------------------
+libzboss_name = libzboss.$(call get,conf_h2n,$1).a

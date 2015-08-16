@@ -46,41 +46,69 @@
 #PURPOSE:
 #*/
 
-#
-# TARGETS:
-#   all, rebuild, clean, clobber, tags, docs
-#
-
-#
-# Can't include Options because it includes deps which can be absent.
-# Separate makefile includes to Options and Platform.
-# Options includes Platform, so it is the only file to be included from non-root makefiles
-#
 include Options
 include Platform
+include Makefile.helpers
 
-all: libs
+.PHONY: tests setconf.%
+
+all: libs tests
 
 MODULES := common mac nwk osif/$(PLATFORM) secur aps zdo
+#TESTS   := tests/aib_nib_pib_test
 
 zboss_SRCS    :=
+zboss_TESTS   :=
+zboss_CONFS   :=
 
-# include the description for each module
+OBJ_DIR := .objs
+
+# Two default configurations added automatically:
+# coordinator and end device.
+$(eval $(call add_config,include/zb_config.zc.h,zc))
+$(eval $(call add_config,include/zb_config.ze.h,ze))
+
+# include Makefile for each module
 include $(patsubst %, %/Makefile.sub, $(MODULES))
+#include $(patsubst %, %/Makefile.sub, $(TESTS))
 
-zboss_OBJS    := $(patsubst %.c, %.o, $(filter %.c, $(zboss_SRCS)))
+# Libs to build. One for each configuration. 
+zboss_LIBS := $(foreach conf, $(zboss_CONFS), $(call libzboss_name,$(conf)))
 
--include $(zboss_OBJS:.o=.d)
+# Set variables containing object files and deps files per configuration
+$(foreach conf, $(zboss_CONFS), $(eval $(call config_vars,$(call get,conf_h2n,$(conf)))))
+# Generate rules for building every object file
+$(foreach conf, $(zboss_CONFS), $(call gen_obj_rules,$(call get,conf_h2n,$(conf))))
+# Include deps files
+-include $(foreach conf, $(zboss_CONFS), $(zboss_$(call get,conf_h2n,$(conf))_DEPS))
 
-libs: libzboss.a
+#tests: $(zboss_TESTS)
 
-libzboss.a : $(zboss_OBJS)
+libs: $(zboss_LIBS)
+
+# Given name of configuration copy its config header file as include/zb_config.h
+setconf.%:
+	$(Q)CONF_PATH=$(call get,conf_n2h,$*) ; \
+	if [ \( ! -L include/zb_config.h -o \
+	        x`readlink include/zb_config.h` != x$$CONF_PATH \) -a \
+ 	      -f $$CONF_PATH ] ; then \
+		ln -sf ../$$CONF_PATH include/zb_config.h ; \
+	fi;
+
+# Create directory for object files
+mk_obj_dir.%:
+	$(Q)mkdir -p $*
+
+.SECONDEXPANSION:
+libzboss.%.a: $$(zboss_$$*_OBJS) | setconf.$$*
+	@echo AR $@
+	$(Q)$(AR) r $@ $^
 
 clean:
 	for i in $(MODULES); \
-		do rm -f $$i/*.o $$i/*.d $$i/*.a;\
+		do rm -f $$i/$(OBJ_DIR)/*.o $$i/$(OBJ_DIR)/*.d $$i/*.a;\
 	done
-
+	rm -f libzboss.*.a
 
 clobber: clean
 	rm -f TAGS tags BROWSE
