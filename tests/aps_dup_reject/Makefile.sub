@@ -61,6 +61,6 @@ $(aps_dup_reject_BIN1) : $(aps_dup_reject_OBJS1)  $(call libzboss_name,zc)
 	$(LINK_BINARY)
 
 $(aps_dup_reject_BIN2) : $(aps_dup_reject_OBJS2)  $(call libzboss_name,ze)
-	$(LINK_aps_dup_reject_BINARY)
+	$(LINK_BINARY)
 
 zboss_TESTS += $(aps_dup_reject_BIN1) $(aps_dup_reject_BIN2)
