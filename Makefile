@@ -66,7 +66,22 @@ TESTS   := tests/aib_nib_pib_test \
 					 tests/certification/TP_NWK_BV-12 \
 					 tests/certification/TP_PRO_BV-26 \
 					 tests/certification/TP_PRO_BV-35 \
-					 tests/certification/TP_PRO_BV-36
+					 tests/certification/TP_PRO_BV-36 \
+					 tests/nwk_best_route \
+					 tests/nwk_leave \
+					 tests/nwk_passive_ack \
+					 tests/nwk_status \
+					 tests/orphan_scan \
+					 tests/remove_device \
+					 tests/zdo_active_ep \
+					 tests/zdo_addr \
+					 tests/zdo_intra_pan_portability \
+					 tests/zdo_join_duration \
+					 tests/zdo_lqi \
+					 tests/zdo_mgmt_join_time \
+					 tests/zdo_mgmt_nwk \
+					 tests/zdo_start_secur \
+					 tests/zdo_startup
 
 zboss_CONFS   :=
 zboss_SRCS    :=
@@ -113,10 +128,15 @@ libzboss.%.a: $$(zboss_$$*_OBJS)
 	$(Q)$(AR) r $@ $^
 
 clean:
-	for i in $(MODULES); \
+	@echo "Cleaning up..."
+	$(Q)for i in $(MODULES); \
 		do rm -f $$i/$(OBJ_DIR)/*.o $$i/$(OBJ_DIR)/*.d $$i/*.a;\
 	done
-	rm -f libzboss.*.a
+	$(Q)rm -f $(foreach conf, $(zboss_CONFS), $(test_$(conf)_OBJS))
+	$(Q)rm -f $(foreach conf, $(zboss_CONFS), $(test_$(conf)_OBJS:.o=.d))
+	$(Q)rm -f $(zboss_TESTS)
+	$(Q)rm -f libzboss.*.a
+	@echo "Finished"
 
 clobber: clean
 	rm -f TAGS tags BROWSE
