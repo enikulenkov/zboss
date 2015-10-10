@@ -50,7 +50,7 @@ include Options
 include Platform
 include Makefile.helpers
 
-.PHONY: tests mk_obj_dir.%
+.PHONY: tests mk_obj_dir.% devtools
 
 all: libs tests
 
@@ -158,3 +158,10 @@ doc_int:
 doc_api:
 	rm -rf doxydoc_api
 	doxygen Doxyfile.API
+
+devtools:
+	( cd devtools/dump_converter && make )
+	( cd devtools/network_simulator && make )
+
+run-st: libs tests
+	( cd devtools/zitt && zitt -c defaults/default_conf.json -l defaults/all_tests.list )
