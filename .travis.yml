@@ -1,3 +1,4 @@
+language: c
 before_script:
   - ln -s build-configurations/Platform-linux Platform
   - ln -s build-configurations/Options-linux-debug Options
