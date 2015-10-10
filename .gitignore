@@ -45,6 +45,11 @@ tests/certification/TP_PRO_BV-35/tr_pro_bv_35_DUTZR
 tests/certification/TP_PRO_BV-35/tr_pro_bv_35_DUTZC
 tests/certification/TP_PRO_BV-36/tr_pro_bv_36_DUTZC
 tests/certification/TP_PRO_BV-36/tr_pro_bv_36_DUTZR
+tests/certification/TP_NWK_BV-12/tp_nwk_bv_12_ZR1
+tests/certification/TP_PRO_BV-35/tp_pro_bv_35_DUTZC
+tests/certification/TP_PRO_BV-35/tp_pro_bv_35_DUTZR
+tests/certification/TP_PRO_BV-36/tp_pro_bv_36_DUTZC
+tests/certification/TP_PRO_BV-36/tp_pro_bv_36_DUTZR
 tests/zdo_join_duration/zdo_join_duration_zed1
 tests/zdo_join_duration/zdo_join_duration_zed2
 tests/zdo_join_duration/zdo_join_duration_zc
