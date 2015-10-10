@@ -164,4 +164,4 @@ devtools:
 	( cd devtools/network_simulator && make )
 
 run-st: libs tests
-	( cd devtools/zitt && zitt -c defaults/default_conf.json -l defaults/all_tests.list )
+	( cd devtools/zitt && ./zitt -c defaults/default_conf.json -l defaults/all_tests.list )
