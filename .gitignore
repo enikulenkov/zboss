@@ -82,4 +82,7 @@ tests/nwk_status/nwk_status_zr
 tests/nwk_status/nwk_status_zc
 include/zb_config.h
 *.dump
+*.pcap
 *.log
+ns.txt
+__pycache__
