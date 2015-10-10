@@ -1,5 +1,7 @@
 language: c
 before_script:
+  - sudo apt-get update -qq
+  - sudo apt-get install -y libxml2-dev libpcap-dev
   - ln -s build-configurations/Platform-linux Platform
   - ln -s build-configurations/Options-linux-debug Options
   - make devtools
