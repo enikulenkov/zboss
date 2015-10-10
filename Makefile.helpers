@@ -155,7 +155,7 @@ endef
 # Returns:   Nothing
 # ----------------------------------------------------------------------------
 define obj_rule
-$1: $(call obj2src,$1,$2) | mk_obj_dir.$(dir $1)
+$1: $(call obj2src,$1,$2) | mk_obj_dir.$(shell echo $(dir $1) | tr '/' ',')
 	$(Q)CONF_PATH=$(call get,conf_n2h,$2) ; \
 	if [ \( ! -L include/zb_config.h -o \
 	        x`readlink include/zb_config.h` != x$$$$CONF_PATH \) -a \

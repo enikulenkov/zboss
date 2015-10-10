@@ -120,7 +120,7 @@ libs: $(zboss_LIBS)
 
 # Create directory for object files
 mk_obj_dir.%:
-	$(Q)mkdir -p $*
+	$(Q)mkdir -p `echo $* | tr ',' '/'`
 
 .SECONDEXPANSION:
 libzboss.%.a: $$(zboss_$$*_OBJS)

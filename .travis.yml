@@ -6,4 +6,4 @@ before_script:
   - ln -s build-configurations/Options-linux-debug Options
   - make devtools
 
-script: make run-st
+script: make Q='' run-st
