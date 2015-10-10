@@ -49,3 +49,6 @@
 
 all:
 	gcc -o dump_converter -DZB_PLATFORM_LINUX_PC32  -I../../osif/include -I../../include -I../../include/osif dump_converter.c -lpcap
+
+clean:
+	rm -f dump_converter
