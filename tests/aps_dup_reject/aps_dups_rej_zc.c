@@ -52,7 +52,7 @@ PURPOSE: Test for ZC application written using ZDO.
 #include "zb_nwk.h"
 #include "zb_aps.h"
 #include "zb_zdo.h"
-
+#include "zb_test.h"
 
 /*! \addtogroup ZB_TESTS */
 /*! @{ */
@@ -63,15 +63,10 @@ PURPOSE: Test for ZC application written using ZDO.
 
 
 /*
-  The test is: ZC starts PAN, ZR joins to it by association and send APS data packet, when ZC
-  received packet, it sends packet to ZR, when ZR received packet, it sends
+  The test is: ZC starts PAN, ZED joins to it by association and send APS data packet, when ZC
+  received packet, it sends packet to ZED, when ZED received packet, it sends
   packet to ZC etc.
  */
-
-#ifndef APS_RETRANSMIT_TEST
-static void zc_send_data(zb_buf_t *buf, zb_uint16_t addr);
-#endif
-zb_uint8_t test_counter;
 
 void data_indication(zb_uint8_t param) ZB_CALLBACK;
 
@@ -79,7 +74,6 @@ MAIN()
 {
   ARGV_UNUSED;
 
-  test_counter = 0;
 #ifndef KEIL
   if ( argc < 3 )
   {
@@ -114,6 +108,12 @@ MAIN()
   MAIN_RETURN(0);
 }
 
+static void test_finish(zb_uint8_t param) ZB_CALLBACK
+{
+  ZB_ASSERT(param == 0);
+  zb_test_finished();
+}
+
 void zb_zdo_startup_complete(zb_uint8_t param) ZB_CALLBACK
 {
   zb_buf_t *buf = ZB_BUF_FROM_REF(param);
@@ -121,6 +121,7 @@ void zb_zdo_startup_complete(zb_uint8_t param) ZB_CALLBACK
   if (buf->u.hdr.status == 0)
   {
     TRACE_MSG(TRACE_APS1, "Device STARTED OK", (FMT__0));
+    zb_test_started();
     zb_af_set_data_indication(data_indication);
   }
   else
@@ -128,28 +129,6 @@ void zb_zdo_startup_complete(zb_uint8_t param) ZB_CALLBACK
     TRACE_MSG(TRACE_ERROR, "Device start FAILED status %d", (FMT__D, (int)buf->u.hdr.status));
   }
   zb_free_buf(buf);
-}
-
-void data_indication(zb_uint8_t param) ZB_CALLBACK
-{
-  zb_ushort_t i;
-  zb_uint8_t *ptr;
-  zb_buf_t *asdu = (zb_buf_t *)ZB_BUF_FROM_REF(param);
-  zb_apsde_data_indication_t *ind = ZB_GET_BUF_PARAM(asdu, zb_apsde_data_indication_t);
-
-  ZB_APS_HDR_CUT_P(asdu, ptr);
-  TRACE_MSG(TRACE_APS3, "apsde_data_indication: packet %p len %d handle 0x%x", (FMT__P_D_D,
-                         asdu, (int)ZB_BUF_LEN(asdu), asdu->u.hdr.status));
-  for (i = 0 ; i < ZB_BUF_LEN(asdu) ; ++i)
-  {
-    TRACE_MSG(TRACE_APS3, "%x %c", (FMT__D_C, (int)ptr[i], ptr[i]));
-    if (ptr[i] != i % 32 + '0')
-    {
-      TRACE_MSG(TRACE_ERROR, "Bad data %hx %c wants %x %c", (FMT__H_C_D_C, ptr[i], ptr[i],
-                              (int)(i % 32 + '0'), (char)i % 32 + '0'));
-    }
-  }
-  zc_send_data(asdu, ind->src_addr);
 }
 
 static void zc_send_data(zb_buf_t *buf, zb_uint16_t addr)
@@ -162,7 +141,7 @@ static void zc_send_data(zb_buf_t *buf, zb_uint16_t addr)
   req = ZB_GET_BUF_TAIL(buf, sizeof(zb_apsde_data_req_t));
   req->dst_addr.addr_short = addr;
   req->addr_mode = ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
-  req->tx_options = 0;//ZB_APSDE_TX_OPT_ACK_TX;
+  req->tx_options = 0;
   req->radius = 1;
   req->profileid = 2;
   req->src_endpoint = 10;
@@ -173,14 +152,44 @@ static void zc_send_data(zb_buf_t *buf, zb_uint16_t addr)
     ptr[i] = i % 32 + '0';
   }
   TRACE_MSG(TRACE_APS3, "Sending apsde_data.request", (FMT__0));
+  TRACE_MSG(TRACE_APS3, "aps_counter %hd", (FMT__H_H, ZG->aps.aib.aps_counter));
 
-  if (test_counter % 2)
-  {
-    TRACE_MSG(TRACE_APS3, "test_counter %hd aps_counter %hd", (FMT__H_H, test_counter, ZG->aps.aib.aps_counter));
-    ZG->aps.aib.aps_counter--;
-  }
-  test_counter++;
   ZB_SCHEDULE_CALLBACK(zb_apsde_data_request, ZB_REF_FROM_BUF(buf));
+}
+
+void data_indication(zb_uint8_t param) ZB_CALLBACK
+{
+  zb_ushort_t i;
+  zb_uint8_t *ptr;
+  zb_buf_t *asdu = (zb_buf_t *)ZB_BUF_FROM_REF(param);
+  zb_apsde_data_indication_t *ind = ZB_GET_BUF_PARAM(asdu, zb_apsde_data_indication_t);
+  static zb_bool_t create_dup = ZB_FALSE;
+
+  ZB_APS_HDR_CUT_P(asdu, ptr);
+  TRACE_MSG(TRACE_APS3, "apsde_data_indication: packet %p len %d handle 0x%x", (FMT__P_D_D,
+                         asdu, (int)ZB_BUF_LEN(asdu), asdu->u.hdr.status));
+  for (i = 0 ; i < ZB_BUF_LEN(asdu) ; ++i)
+  {
+    TRACE_MSG(TRACE_APS3, "%x %c", (FMT__D_C, (int)ptr[i], ptr[i]));
+    if (ptr[i] != i % 32 + '0')
+    {
+      ZB_TEST_ERROR("Bad data\n");
+      TRACE_MSG(TRACE_ERROR, "Bad data %hx %c wants %x %c", (FMT__H_C_D_C, ptr[i], ptr[i],
+                              (int)(i % 32 + '0'), (char)i % 32 + '0'));
+    }
+  }
+
+  if (create_dup)
+    /* Intentionally create duplicate APS frame, so ED drop it */
+    ZG->aps.aib.aps_counter--;
+
+  zc_send_data(asdu, ind->src_addr);
+  if (create_dup)
+    /* Introduce timeout to be sure APS packet is sent over network */
+    ZB_SCHEDULE_ALARM(test_finish, 0, 10*ZB_TIME_ONE_SECOND);
+ 
+  /* Set flag to send APS duplicate on next APS data indication */
+  create_dup = ZB_TRUE;
 }
 
 /*! @} */

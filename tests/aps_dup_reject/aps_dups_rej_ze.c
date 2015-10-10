@@ -53,6 +53,7 @@ PURPOSE: Test for ZC application written using ZDO.
 #include "zb_nwk.h"
 #include "zb_aps.h"
 #include "zb_zdo.h"
+#include "zb_test.h"
 
 /*! \addtogroup ZB_TESTS */
 /*! @{ */
@@ -104,6 +105,7 @@ void zb_zdo_startup_complete(zb_uint8_t param) ZB_CALLBACK
   {
     TRACE_MSG(TRACE_APS1, "Device STARTED OK", (FMT__0));
     zb_af_set_data_indication(data_indication);
+    zb_test_started();
     send_data((zb_buf_t *)ZB_BUF_FROM_REF(param));
   }
   else
@@ -111,6 +113,12 @@ void zb_zdo_startup_complete(zb_uint8_t param) ZB_CALLBACK
     TRACE_MSG(TRACE_ERROR, "Device started FAILED status %d", (FMT__D, (int)buf->u.hdr.status));
     zb_free_buf(buf);
   }
+}
+
+static void test_finish(zb_uint8_t param) ZB_CALLBACK
+{
+  ZB_ASSERT(param == 0);
+  zb_test_finished();
 }
 
 static void send_data(zb_buf_t *buf)
@@ -121,7 +129,7 @@ static void send_data(zb_buf_t *buf)
 
   req->dst_addr.addr_short = 0; /* send to ZC */
   req->addr_mode = ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
-  req->tx_options = 0;//ZB_APSDE_TX_OPT_ACK_TX;
+  req->tx_options = 0;
   req->radius = 1;
   req->profileid = 2;
   req->src_endpoint = 10;
@@ -144,20 +152,34 @@ void data_indication(zb_uint8_t param)
   zb_ushort_t i;
   zb_uint8_t *ptr;
   zb_buf_t *asdu = (zb_buf_t *)ZB_BUF_FROM_REF(param);
+  static zb_bool_t packet_received = ZB_FALSE;
 
   ZB_APS_HDR_CUT_P(asdu, ptr);
   TRACE_MSG(TRACE_APS3, "data_indication: packet %p len %d handle 0x%x", (FMT__P_D_D,
                          asdu, (int)ZB_BUF_LEN(asdu), asdu->u.hdr.status));
+  if (packet_received)
+  {
+      ZB_TEST_ERROR("Duplicate isn't filtered!\n");
+      TRACE_MSG(TRACE_ERROR, "Duplicate isn't filtered!", (FMT__0));
+  }
+
   for (i = 0 ; i < ZB_BUF_LEN(asdu) ; ++i)
   {
     TRACE_MSG(TRACE_APS3, "%x %c", (FMT__D_C, (int)ptr[i], ptr[i]));
     if (ptr[i] != i % 32 + '0')
     {
+      ZB_TEST_ERROR("Bad data\n");
       TRACE_MSG(TRACE_ERROR, "Bad data %hx %c wants %x %c", (FMT__H_C_D_C, ptr[i], ptr[i],
                               (int)(i % 32 + '0'), (char)i % 32 + '0'));
     }
   }
   send_data(asdu);
+  packet_received = ZB_TRUE;
+  /*
+   * Schedule test finish after 10 seconds. If during this time APS packet is
+   * received, then test is considered failed.
+   */
+  ZB_SCHEDULE_ALARM(test_finish, 0, 10*ZB_TIME_ONE_SECOND);
 }
 
 /*! @} */
