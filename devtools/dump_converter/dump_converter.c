@@ -70,11 +70,17 @@ typedef	unsigned short int u_int16_t;
 #include <unistd.h>
 #include <pcap/pcap.h>
 
-#include "zb_common.h"
-#include "zb_mac_transport.h"
+#include "zb_types.h"
+#include "zb_time.h"
+#include "zb_mac_transport_data.h"
 
-// #define ETH_AND_UDP_HDR_OFFSETS (sizeof(struct ether_header) + sizeof(struct iphdr) + sizeof(struct udphdr))
+/* UDP port set in .pcap when converting traffic generated
+ * by network simulator */
+#define ZB_UDP_PORT_NS 9999
 
+/* UDP port set in .pcap when converting real transceiver traffic - that is, dump
+ * contains all transceiver registers access. */
+#define ZB_UDP_PORT_REAL 9998
 
 #define ETH_AND_UDP_HDR_OFFSETS 0
 
@@ -83,7 +89,6 @@ char *g_in_file;
 char *g_out_file;
 int custom_ns_header_offset;
 
-static void create_eth_hdr(char *buf, int len, int is_w);
 static void parse_cmd(int argc, char **argv);
 static void fcs_add(char *buf, int len);
 
@@ -122,8 +127,6 @@ int main(int argc, char **argv)
   fseek(out_f, 0, SEEK_SET);
 
   /* open file for pcap dump */
-  // pcap = pcap_open_dead(DLT_EN10MB, 4096);
-
   pcap = pcap_open_dead(DLT_IEEE802_15_4, 4096);
 
   if (!pcap)
@@ -154,7 +157,6 @@ int main(int argc, char **argv)
 
     pkt_n++;
 
-//    printf("%d: l %d\n", pkt_n, hdr.len);
     if (hdr.len == 0)
     {
       fprintf(stderr, "at pkt %d skip zero byte - hmm? Was it 0a -> 0d 0a translation??\n", pkt_n);
@@ -216,7 +218,6 @@ int main(int argc, char **argv)
       continue;
     }
 
-    // create_eth_hdr(iobuf, hdr.len + real_mode, (hdr.type != 1));
     cap_hdr.caplen = cap_hdr.len = ETH_AND_UDP_HDR_OFFSETS + hdr.len + real_mode + custom_ns_header_offset;
     if (g_udp_port != ZB_UDP_PORT_NS)
     {
@@ -295,66 +296,6 @@ static void parse_cmd(int argc, char **argv)
     usage(argv);
   }
 }
-
-
-static void create_eth_hdr(char *buf, int len, int is_w)
-{
-  struct ether_header *eh = (struct ether_header *)buf;
-  struct iphdr *iph = (struct iphdr *)(eh + 1);
-  struct udphdr *udph = (struct udphdr *)(iph + 1);
-  zb_uint32_t sum = 0;
-  zb_uchar_t *p;
-  unsigned i;
-
-
-  /* ethernet header. */
-  /* fake Ethernet addresses 1 and 2 */
-  if (is_w)
-  {
-    eh->ether_dhost[5] = 2;
-    eh->ether_shost[5] = 1;
-  }
-  else
-  {
-    eh->ether_dhost[5] = 1;
-    eh->ether_shost[5] = 2;
-  }
-  eh->ether_type = 0x08;
-
-  /* IP header */
-  iph->ihl = sizeof(*iph) / 4;
-  iph->version = 4;
-  iph->tot_len = htons(sizeof(*udph) + sizeof(*iph) + len);
-  iph->protocol = 0x11;         /* UDP */
-  iph->ttl = 64;                /* ?? */
-  if (is_w)
-  {
-    iph->saddr = 0x0100000a;
-    iph->daddr = 0xfefefe0a;
-  }
-  else
-  {
-    iph->saddr = 0xfefefe0a;
-    iph->daddr = 0x0100000a;
-  }
-
-  p = (zb_uchar_t *)iph;
-  for (i = 0 ; i < sizeof(*iph) ; i += 2)
-  {
-    sum += (zb_uint16_t)((p[i]<<8) & 0xff00)+(p[i + 1] & 0xff);
-  }
-	while (sum>>16)
-  {
-	  sum = (sum & 0xFFFF)+(sum >> 16);
-  }
-	iph->check = htons((zb_uint16_t)(~sum));
-
-  /* UDP header */
-  udph->source = htons(g_udp_port);
-  udph->dest = htons(g_udp_port);
-  udph->len = htons(len + sizeof(*udph));
-}
-
 
 static void fcs_add(char *buf, int len)
 {

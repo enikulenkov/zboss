@@ -64,6 +64,7 @@ Most logic in the userspace to achive short port time.
 
 #include "zb_bufpool.h"
 #include "zb_ringbuffer.h"
+#include "zb_mac_transport_data.h"
 #include "zb_mac_transport.h"
 #include "zb_nwk.h"
 

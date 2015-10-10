@@ -60,6 +60,7 @@ PURPOSE: Put/Get ready buffers to/from NS-3 pipe.
 #include "zb_bufpool.h"
 #include "zb_ringbuffer.h"
 #include "zb_mac_transport.h"
+#include "zb_mac_transport_data.h"
 #include "zb_nwk.h"
 
 /*! \addtogroup ZB_MAC_TRANSPORT */

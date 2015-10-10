@@ -297,19 +297,6 @@ If defined, platform is some 8051 clone
 
 #endif
 
-/**
-   Port to be used for zb-over-udp when converting traffic dump into .pcap for WireShark
-
-   This is for real transiver case - that is, dump contains all transiver registers access.
-*/
-#define ZB_UDP_PORT_REAL 9998
-/**
-   Port to be used for zb-over-udp when converting traffic dump into .pcap for WireShark
-
-   This is for ns-3 build case - that is, dump contains MAC packets.
-*/
-#define ZB_UDP_PORT_NS 9999
-
 #define ZB_ED_ROLE
 
 /**

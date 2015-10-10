@@ -49,6 +49,7 @@ PURPOSE: Serial transport for 8051
 #include "zb_common.h"
 
 #ifndef  ZB_SNIFFER
+#include "zb_mac_transport_data.h"
 #include "zb_mac_transport.h"
 #include "zb_bufpool.h"
 #include "zb_ringbuffer.h"

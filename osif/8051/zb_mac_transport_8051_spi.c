@@ -54,6 +54,7 @@ put and non-blocked get from the int handler.
 #include "zb_bufpool.h"
 #include "zb_ringbuffer.h"
 #include "zb_scheduler.h"
+#include "zb_mac_transport_data.h"
 #include "zb_mac_transport.h"
 
 /*! \addtogroup ZB_MAC_TRANSPORT */
