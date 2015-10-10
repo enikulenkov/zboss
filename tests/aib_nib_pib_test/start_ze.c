@@ -53,6 +53,7 @@ PURPOSE: Test for ZC application written using ZDO.
 #include "zb_nwk.h"
 #include "zb_aps.h"
 #include "zb_zdo.h"
+#include "zb_test.h"
 
 #ifndef ZB_ED_ROLE
 #error define ZB_ED_ROLE to compile ze tests
@@ -144,15 +145,16 @@ void zb_zdo_startup_complete(zb_uint8_t param) ZB_CALLBACK
   zb_buf_t *buf = ZB_BUF_FROM_REF(param);
   if (buf->u.hdr.status == 0)
   {
+    zb_test_started();
     TRACE_MSG(TRACE_APS1, "Device STARTED OK", (FMT__0));
     set_aib_information(param);
-    ZB_SCHEDULE_ALARM(get_aib_information, param, ZB_MILLISECONDS_TO_BEACON_INTERVAL(20000));
+    ZB_SCHEDULE_ALARM(get_aib_information, param, ZB_MILLISECONDS_TO_BEACON_INTERVAL(2000));
 
     set_nib_information(param);
-    ZB_SCHEDULE_ALARM(get_nib_information, param, ZB_MILLISECONDS_TO_BEACON_INTERVAL(30000));
+    ZB_SCHEDULE_ALARM(get_nib_information, param, ZB_MILLISECONDS_TO_BEACON_INTERVAL(3000));
 
     set_pib_information(param);
-    ZB_SCHEDULE_ALARM(get_pib_information, param, ZB_MILLISECONDS_TO_BEACON_INTERVAL(40000));
+    ZB_SCHEDULE_ALARM(get_pib_information, param, ZB_MILLISECONDS_TO_BEACON_INTERVAL(4000));
   }
   else
   {
@@ -228,8 +230,10 @@ void get_aib_information(zb_uint8_t param)
   ZVUNUSED(param);
   TRACE_MSG(TRACE_APS2, "Get Aib test", (FMT__0));
 
-  TRACE_MSG(TRACE_APS2, "aps_designated_coordinator %hd", (FMT__H, ZB_AIB().aps_designated_coordinator));
-  TRACE_MSG(TRACE_APS2, "aps_use_extended_pan_id "TRACE_FORMAT_64"", (FMT__A, TRACE_ARG_64(ZB_AIB().aps_use_extended_pan_id)));
+  TRACE_MSG(TRACE_APS2, "aps_designated_coordinator %hd",
+      (FMT__H, ZB_AIB().aps_designated_coordinator));
+  TRACE_MSG(TRACE_APS2, "aps_use_extended_pan_id "TRACE_FORMAT_64"",
+      (FMT__A, TRACE_ARG_64(ZB_AIB().aps_use_extended_pan_id)));
 
   ZB_GET_OUT_BUF_DELAYED(get_aib_design_coord);
   ZB_GET_OUT_BUF_DELAYED(get_aib_ext_pan_id);
@@ -517,6 +521,7 @@ void get_pib_unsupported_attr(zb_uint8_t param)
   ZB_BUF_INITIAL_ALLOC(buf, sizeof(zb_mlme_get_request_t), req);
   req->pib_attr = 0xaa;
   zb_mlme_get_request(param);
+  zb_test_finished();
 }
 
 /*! @} */

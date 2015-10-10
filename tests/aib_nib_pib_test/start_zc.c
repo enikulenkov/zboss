@@ -52,6 +52,7 @@ PURPOSE: Test for ZC application written using ZDO.
 #include "zb_nwk.h"
 #include "zb_aps.h"
 #include "zb_zdo.h"
+#include "zb_test.h"
 
 
 /*! \addtogroup ZB_TESTS */
@@ -60,13 +61,6 @@ PURPOSE: Test for ZC application written using ZDO.
 #ifndef ZB_COORDINATOR_ROLE
 #error Coordinator role is not compiled!
 #endif
-
-
-/*
-  The test is: ZC starts PAN, ZR joins to it by association and send APS data packet, when ZC
-  received packet, it sends packet to ZR, when ZR received packet, it sends
-  packet to ZC etc.
- */
 
 
 MAIN()
@@ -110,6 +104,12 @@ MAIN()
 }
 
 
+void terminate(zb_uint8_t param)
+{
+  (void)param;
+  zb_test_finished();
+}
+
 
 void zb_zdo_startup_complete(zb_uint8_t param) ZB_CALLBACK
 {
@@ -117,11 +117,14 @@ void zb_zdo_startup_complete(zb_uint8_t param) ZB_CALLBACK
   TRACE_MSG(TRACE_APS3, ">>zb_zdo_startup_complete status %d", (FMT__D, (int)buf->u.hdr.status));
   if (buf->u.hdr.status == 0)
   {
+    zb_test_started();
     TRACE_MSG(TRACE_APS1, "Device STARTED OK", (FMT__0));
+    ZB_SCHEDULE_ALARM(terminate, 0, 20*ZB_TIME_ONE_SECOND);
   }
   else
   {
     TRACE_MSG(TRACE_ERROR, "Device start FAILED status %d", (FMT__D, (int)buf->u.hdr.status));
+    ZB_TEST_ERROR("Device start FAILED");
   }
   zb_free_buf(buf);
 }
