@@ -9,7 +9,7 @@ import sys
 from test_runner import TestRunner
 from device_pool import DevicePool
 from testRunHooks import *
-from zitt_common import ExecutionRetCode
+import zitt_common
 
 # Global zitt context
 zitt = {}
@@ -109,7 +109,7 @@ def update_statistics(stats, test_res):
     test_failed = False
     stats['tests_executed'] = stats['tests_executed'] + 1
 
-    if test_res['result'] != ExecutionRetCode.success:
+    if test_res['result'] != zitt_common.RET_SUCCESS:
         test_failed = True
 
     for instance_res in test_res['instances']:

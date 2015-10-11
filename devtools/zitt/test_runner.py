@@ -1,7 +1,7 @@
 import threading
 import logging
 
-from zitt_common import ExecutionRetCode
+import zitt_common
 
 class TestRunner:
     class InstanceExecutor:
@@ -69,7 +69,7 @@ class TestRunner:
         self.test_descr   = descr
         self.dev_threads  = []
         self.mutex        = threading.Lock()
-        self.result       = {'result' : ExecutionRetCode.success, 'instances' : []}
+        self.result       = {'result' : zitt_common.RET_SUCCESS, 'instances' : []}
 
     def run_devices(self, device_pool):
         try:
@@ -83,16 +83,16 @@ class TestRunner:
                 ret = executor.start_instance()
 
                 with self.mutex:
-                    if self.result['result'] == ExecutionRetCode.success:
+                    if self.result['result'] == zitt_common.RET_SUCCESS:
                         if ret != True:
                             logging.debug('Startup error')
-                            self.result['result'] = ExecutionRetCode.startup_error
+                            self.result['result'] = zitt_common.RET_STARTUP_ERROR
                             self.stop_devices()
                             break
         except KeyboardInterrupt:
-            self.result['result'] = ExecutionRetCode.stopped_by_user
+            self.result['result'] = zitt_common.RET_STOPPED_BY_USER
         except:
-            self.result['result'] = ExecutionRetCode.internal_error
+            self.result['result'] = zitt_common.RET_INTERNAL_ERROR
 
         finally:
             for executor in self.dev_threads:
@@ -110,7 +110,7 @@ class TestRunner:
     def test_timeout_timer(self):
         logging.info("Timeout")
         with self.mutex:
-            self.result['result'] = ExecutionRetCode.timeout
+            self.result['result'] = zitt_common.RET_TIMEOUT
             self.stop_devices()
 
     def run(self, device_pool):
