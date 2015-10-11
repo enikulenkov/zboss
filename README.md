@@ -1,4 +1,7 @@
-Short build instructions:
+[![Build Status](https://travis-ci.org/enikulenkov/zboss.svg?branch=master)](https://travis-ci.org/enikulenkov/zboss)
+
+Short build instructions
+========================
 
 a) Linux
 ln -s build-configurations/Platform-linux Platform
