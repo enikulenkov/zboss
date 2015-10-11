@@ -6,10 +6,12 @@ import os
 
 NS_EXE_RELATIVE_PATH='../../devtools/network_simulator/network_simulator'
 def get_ns_exe_path():
-    which_res = shutil.which('network_simulator')
-    if which_res != None:
-        return which_res
-    elif os.path.isfile(NS_EXE_RELATIVE_PATH):
+    # which is not present in Python < 3.3. Temporarily disable it.
+    #which_res = shutil.which('network_simulator')
+    #if which_res != None:
+    #    return which_res
+    #elif os.path.isfile(NS_EXE_RELATIVE_PATH):
+    if os.path.isfile(NS_EXE_RELATIVE_PATH):
         return NS_EXE_RELATIVE_PATH
     else:
         return None
