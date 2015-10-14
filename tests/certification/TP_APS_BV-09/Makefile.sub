@@ -68,15 +68,15 @@ TP_APS_BV_09_BIN3 := tests/certification/TP_APS_BV-09/tp_aps_bv_09_zed1$(EXE)
 TP_APS_BV_09_BIN4 := tests/certification/TP_APS_BV-09/tp_aps_bv_09_zed2$(EXE)
 
 $(TP_APS_BV_09_BIN1) : $(TP_APS_BV_09_OBJS1)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(TP_APS_BV_09_BIN2) : $(TP_APS_BV_09_OBJS2)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(TP_APS_BV_09_BIN3) : $(TP_APS_BV_09_OBJS3)  $(call libzboss_name,ze)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(TP_APS_BV_09_BIN4) : $(TP_APS_BV_09_OBJS4)  $(call libzboss_name,ze)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 zboss_TESTS += $(TP_APS_BV_09_BIN1) $(TP_APS_BV_09_BIN2) $(TP_APS_BV_09_BIN3) $(TP_APS_BV_09_BIN4)

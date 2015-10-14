@@ -58,9 +58,9 @@ aib_nib_pib_test_BIN1 := tests/aib_nib_pib_test/start_zc$(EXE)
 aib_nib_pib_test_BIN2 := tests/aib_nib_pib_test/start_ze$(EXE)
 
 $(aib_nib_pib_test_BIN1) : $(aib_nib_pib_test_OBJS1)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(aib_nib_pib_test_BIN2) : $(aib_nib_pib_test_OBJS2)  $(call libzboss_name,ze)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 zboss_TESTS += $(aib_nib_pib_test_BIN1) $(aib_nib_pib_test_BIN2)

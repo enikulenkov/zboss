@@ -58,9 +58,9 @@ TP_APS_BV_29_I_BIN1 := tests/certification/TP_APS_BV-29-I/tp_aps_bv_29_i_DUTZR$(
 TP_APS_BV_29_I_BIN2 := tests/certification/TP_APS_BV-29-I/tp_aps_bv_29_i_gZC$(EXE)
 
 $(TP_APS_BV_29_I_BIN1) : $(TP_APS_BV_29_I_OBJS1)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(TP_APS_BV_29_I_BIN2) : $(TP_APS_BV_29_I_OBJS2)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 zboss_TESTS += $(TP_APS_BV_29_I_BIN1) $(TP_APS_BV_29_I_BIN2)

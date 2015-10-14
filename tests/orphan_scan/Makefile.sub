@@ -58,9 +58,9 @@ orphan_scan_BIN1 := tests/orphan_scan/orphan_scan_zc$(EXE)
 orphan_scan_BIN2 := tests/orphan_scan/orphan_scan_zr$(EXE)
 
 $(orphan_scan_BIN1) : $(orphan_scan_OBJS1)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(orphan_scan_BIN2) : $(orphan_scan_OBJS2)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 zboss_TESTS += $(orphan_scan_BIN1) $(orphan_scan_BIN2)

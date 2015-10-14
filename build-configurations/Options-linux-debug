@@ -93,10 +93,6 @@ CFLAGS = $(CFLAGS_BUILD_CFG) $(CFLAGS_USER) -pipe $(WARN_OPTIONS) -fno-strict-al
 CXXFLAGS = $(CFLAGS_BUILD_CFG) $(CFLAGS_USER) -pipe $(WARN_OPTIONS_CXX) -fno-strict-aliasing $(WERROR)
 INCPATH = -Iosif/include -Iinclude
 
-DEPSWITCH      = -MM
+DEPSWITCH = -MM
+PROF_FLAG =
 AR	=	ar
-
-PROF_FLAG=
-
-LINK_BINARY = $(CC) $(PROF_FLAG) -o $@ $^ $(MEMDEBUG) $(LINK_FLAGS) $(LIBS)
-LINK_BINARY_CXX = $(CXX) -g $(PROF_FLAG) -o $@ $^ $(MEMDEBUG) -lpthread $(LINK_FLAGS)

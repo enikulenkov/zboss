@@ -58,9 +58,9 @@ zdo_addr_BIN1 := tests/zdo_addr/zdo_test_nwk_addr_zc$(EXE)
 zdo_addr_BIN2 := tests/zdo_addr/zdo_test_nwk_addr_zr$(EXE)
 
 $(zdo_addr_BIN1) : $(zdo_addr_OBJS1)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(zdo_addr_BIN2) : $(zdo_addr_OBJS2)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 zboss_TESTS += $(zdo_addr_BIN1) $(zdo_addr_BIN2)

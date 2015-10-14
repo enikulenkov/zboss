@@ -63,12 +63,12 @@ remove_device_BIN2 := tests/remove_device/remove_dev_zr1$(EXE)
 remove_device_BIN2 := tests/remove_device/remove_dev_zr2$(EXE)
 
 $(remove_device_BIN1) : $(remove_device_OBJS1)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(remove_device_BIN2) : $(remove_device_OBJS2)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(remove_device_BIN3) : $(remove_device_OBJS3)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 zboss_TESTS += $(remove_device_BIN1) $(remove_device_BIN2) $(remove_device_BIN3)

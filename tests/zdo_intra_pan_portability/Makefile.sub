@@ -63,12 +63,12 @@ zdo_ipan_portability_BIN2 := tests/zdo_intra_pan_portability/intra_pan_portabili
 zdo_ipan_portability_BIN2 := tests/zdo_intra_pan_portability/intra_pan_portability_zr$(EXE)
 
 $(zdo_ipan_portability_BIN1) : $(zdo_ipan_portability_OBJS1)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(zdo_ipan_portability_BIN2) : $(zdo_ipan_portability_OBJS2)  $(call libzboss_name,ze)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(zdo_ipan_portability_BIN3) : $(zdo_ipan_portability_OBJS3)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 zboss_TESTS += $(zdo_ipan_portability_BIN1) $(zdo_ipan_portability_BIN2) $(zdo_ipan_portability_BIN3)

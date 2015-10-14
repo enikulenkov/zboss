@@ -179,3 +179,11 @@ endef
 # Returns:   Library name (not full path)
 # ----------------------------------------------------------------------------
 libzboss_name = libzboss.$1.a
+
+# ----------------------------------------------------------------------------
+#  Link binary file (executable)
+# ----------------------------------------------------------------------------
+define link_binary
+@echo CCLD $@
+$(Q)$(CC) $(PROF_FLAG) -o $@ $^ $(MEMDEBUG) $(LINK_FLAGS) $(LIBS)
+endef

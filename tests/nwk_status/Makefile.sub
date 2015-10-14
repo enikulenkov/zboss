@@ -58,9 +58,9 @@ nwk_status_BIN1 := tests/nwk_status/nwk_status_zc$(EXE)
 nwk_status_BIN2 := tests/nwk_status/nwk_status_zr$(EXE)
 
 $(nwk_status_BIN1) : $(nwk_status_OBJS1)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(nwk_status_BIN2) : $(nwk_status_OBJS2)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 zboss_TESTS += $(nwk_status_BIN1) $(nwk_status_BIN2)

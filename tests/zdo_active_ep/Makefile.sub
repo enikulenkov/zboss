@@ -58,9 +58,9 @@ zdo_active_ep_BIN1 := tests/zdo_active_ep/zdo_zc_test$(EXE)
 zdo_active_ep_BIN2 := tests/zdo_active_ep/zdo_zr_test$(EXE)
 
 $(zdo_active_ep_BIN1) : $(zdo_active_ep_OBJS1)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(zdo_active_ep_BIN2) : $(zdo_active_ep_OBJS2)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 zboss_TESTS += $(zdo_active_ep_BIN1) $(zdo_active_ep_BIN2)

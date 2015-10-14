@@ -63,12 +63,12 @@ nwk_best_route_BIN2 := tests/nwk_best_route/nwk_best_route_zr4$(EXE)
 nwk_best_route_BIN3 := tests/nwk_best_route/nwk_best_route_zr$(EXE)
 
 $(nwk_best_route_BIN1) : $(nwk_best_route_OBJS1)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(nwk_best_route_BIN2) : $(nwk_best_route_OBJS2)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(nwk_best_route_BIN3) : $(nwk_best_route_OBJS3)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 zboss_TESTS += $(nwk_best_route_BIN1) $(nwk_best_route_BIN2) $(nwk_best_route_BIN3)

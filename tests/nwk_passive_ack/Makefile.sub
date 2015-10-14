@@ -68,16 +68,16 @@ nwk_passive_ack_BIN3 := tests/nwk_passive_ack/nwk_passive_ack_zr1$(EXE)
 nwk_passive_ack_BIN4 := tests/nwk_passive_ack/nwk_passive_ack_zr3$(EXE)
 
 $(nwk_passive_ack_BIN1) : $(nwk_passive_ack_OBJS1)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(nwk_passive_ack_BIN2) : $(nwk_passive_ack_OBJS2)  $(call libzboss_name,ze)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(nwk_passive_ack_BIN3) : $(nwk_passive_ack_OBJS3)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(nwk_passive_ack_BIN4) : $(nwk_passive_ack_OBJS4)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 zboss_TESTS += $(nwk_passive_ack_BIN1) $(nwk_passive_ack_BIN2) \
 							 $(nwk_passive_ack_BIN3) $(nwk_passive_ack_BIN4)

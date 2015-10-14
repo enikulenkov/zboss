@@ -63,12 +63,12 @@ zdo_start_secur_BIN2 := tests/zdo_start_secur/zdo_start_sec_ze$(EXE)
 zdo_start_secur_BIN3 := tests/zdo_start_secur/zdo_start_sec_zr$(EXE)
 
 $(zdo_start_secur_BIN1) : $(zdo_start_secur_OBJS1)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(zdo_start_secur_BIN2) : $(zdo_start_secur_OBJS2)  $(call libzboss_name,ze)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(zdo_start_secur_BIN3) : $(zdo_start_secur_OBJS3)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 zboss_TESTS += $(zdo_start_secur_BIN1) $(zdo_start_secur_BIN2) $(zdo_start_secur_BIN3)

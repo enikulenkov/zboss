@@ -63,12 +63,12 @@ TP_NWK_BV_12_BIN2 := tests/certification/TP_NWK_BV-12/tp_nwk_bv_12_ZR1$(EXE)
 TP_NWK_BV_12_BIN3 := tests/certification/TP_NWK_BV-12/tp_nwk_bv_12_ZR$(EXE)
 
 $(TP_NWK_BV_12_BIN1) : $(TP_NWK_BV-12_OBJS1)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(TP_NWK_BV_12_BIN2) : $(TP_NWK_BV-12_OBJS2)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(TP_NWK_BV_12_BIN3) : $(TP_NWK_BV-12_OBJS3)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 zboss_TESTS += $(TP_NWK_BV_12_BIN1) $(TP_NWK_BV_12_BIN2) $(TP_NWK_BV_12_BIN3)

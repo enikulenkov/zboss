@@ -58,9 +58,9 @@ aps_group_BIN1 := tests/aps_group/aps_group_zc$(EXE)
 aps_group_BIN2 := tests/aps_group/aps_group_zr1$(EXE)
 
 $(aps_group_BIN1) : $(aps_group_OBJS1)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(aps_group_BIN2) : $(aps_group_OBJS2)  $(call libzboss_name,ze)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 zboss_TESTS += $(aps_group_BIN1) $(aps_group_BIN2)

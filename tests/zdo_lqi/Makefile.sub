@@ -73,18 +73,18 @@ zdo_lqi_BIN4 := tests/zdo_lqi/zdo_ze3_lqi_test$(EXE)
 zdo_lqi_BIN5 := tests/zdo_lqi/zdo_zr1_lqi_test$(EXE)
 
 $(zdo_lqi_BIN1) : $(zdo_lqi_OBJS1)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(zdo_lqi_BIN2) : $(zdo_lqi_OBJS2)  $(call libzboss_name,ze)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(zdo_lqi_BIN3) : $(zdo_lqi_OBJS3)  $(call libzboss_name,ze)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(zdo_lqi_BIN4) : $(zdo_lqi_OBJS4)  $(call libzboss_name,ze)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(zdo_lqi_BIN5) : $(zdo_lqi_OBJS5)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 zboss_TESTS += $(zdo_lqi_BIN1) $(zdo_lqi_BIN2) $(zdo_lqi_BIN3) $(zdo_lqi_BIN4) $(zdo_lqi_BIN5)

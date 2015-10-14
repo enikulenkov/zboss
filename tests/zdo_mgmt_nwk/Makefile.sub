@@ -58,9 +58,9 @@ zdo_mgmt_nwk_BIN1 := tests/zdo_mgmt_nwk/zdo_zc_test_mgmt_nwk$(EXE)
 zdo_mgmt_nwk_BIN2 := tests/zdo_mgmt_nwk/zdo_zr_test_mgmt_nwk$(EXE)
 
 $(zdo_mgmt_nwk_BIN1) : $(zdo_mgmt_nwk_OBJS1)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(zdo_mgmt_nwk_BIN2) : $(zdo_mgmt_nwk_OBJS2)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 zboss_TESTS += $(zdo_mgmt_nwk_BIN1) $(zdo_mgmt_nwk_BIN2)

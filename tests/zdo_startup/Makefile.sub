@@ -63,12 +63,12 @@ zdo_startup_BIN2 := tests/zdo_startup/zdo_start_ze$(EXE)
 zdo_startup_BIN3 := tests/zdo_startup/zdo_start_zr$(EXE)
 
 $(zdo_startup_BIN1) : $(zdo_startup_OBJS1)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(zdo_startup_BIN2) : $(zdo_startup_OBJS2)  $(call libzboss_name,ze)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(zdo_startup_BIN3) : $(zdo_startup_OBJS3)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 zboss_TESTS += $(zdo_startup_BIN1) $(zdo_startup_BIN2) $(zdo_startup_BIN3)

@@ -63,12 +63,12 @@ zdo_join_duration_BIN2 := tests/zdo_join_duration/zdo_join_duration_zed1$(EXE)
 zdo_join_duration_BIN3 := tests/zdo_join_duration/zdo_join_duration_zed2$(EXE)
 
 $(zdo_join_duration_BIN1) : $(zdo_join_duration_OBJS1)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(zdo_join_duration_BIN2) : $(zdo_join_duration_OBJS2)  $(call libzboss_name,ze)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(zdo_join_duration_BIN3) : $(zdo_join_duration_OBJS3)  $(call libzboss_name,ze)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 zboss_TESTS += $(zdo_join_duration_BIN1) $(zdo_join_duration_BIN2) $(zdo_join_duration_BIN3)

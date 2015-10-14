@@ -63,12 +63,12 @@ nwk_leave_BIN2 := tests/nwk_leave/zdo_start_zc$(EXE)
 nwk_leave_BIN3 := tests/nwk_leave/zdo_start_zr$(EXE)
 
 $(nwk_leave_BIN1) : $(nwk_leave_OBJS1)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(nwk_leave_BIN2) : $(nwk_leave_OBJS2)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(nwk_leave_BIN3) : $(nwk_leave_OBJS3)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 zboss_TESTS += $(nwk_leave_BIN1) $(nwk_leave_BIN2) $(nwk_leave_BIN3)

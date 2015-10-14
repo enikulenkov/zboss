@@ -63,12 +63,12 @@ zdo_mgmt_join_time_BIN2 := tests/zdo_mgmt_join_time/zdo_mgmt_join_time_zed$(EXE)
 zdo_mgmt_join_time_BIN3 := tests/zdo_mgmt_join_time/zdo_mgmt_join_time_zr$(EXE)
 
 $(zdo_mgmt_join_time_BIN1) : $(zdo_mgmt_join_time_OBJS1)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(zdo_mgmt_join_time_BIN2) : $(zdo_mgmt_join_time_OBJS2)  $(call libzboss_name,ze)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(zdo_mgmt_join_time_BIN3) : $(zdo_mgmt_join_time_OBJS3)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 zboss_TESTS += $(zdo_mgmt_join_time_BIN1) $(zdo_mgmt_join_time_BIN2) $(zdo_mgmt_join_time_BIN3)

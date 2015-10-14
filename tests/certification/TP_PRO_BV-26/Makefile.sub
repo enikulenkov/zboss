@@ -58,9 +58,9 @@ TP_PRO_BV_26_BIN1 := tests/certification/TP_PRO_BV-26/tp_pro_bv_26_DUTZR$(EXE)
 TP_PRO_BV_26_BIN2 := tests/certification/TP_PRO_BV-26/tp_pro_bv_26_gZC$(EXE)
 
 $(TP_PRO_BV_26_BIN1) : $(TP_PRO_BV-26_OBJS1)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 $(TP_PRO_BV_26_BIN2) : $(TP_PRO_BV-26_OBJS2)  $(call libzboss_name,zc)
-	$(LINK_BINARY)
+	$(call link_binary)
 
 zboss_TESTS += $(TP_PRO_BV_26_BIN1) $(TP_PRO_BV_26_BIN2)
