@@ -55,7 +55,7 @@ class TestRunner:
 
         def stop_instance(self):
             with self.mutex:
-                logging.info("stop_instance..")
+                logging.info("stop_instance...")
                 self.device.stop_instance()
                 self._clear()
 
@@ -104,7 +104,8 @@ class TestRunner:
     def stop_devices(self):
         logging.info("Stop devices")
         for executor in self.dev_threads:
-            executor.stop_instance()
+            if not executor.finished:
+                executor.stop_instance()
         logging.debug("Devices stopped")
 
     def test_timeout_timer(self):
@@ -118,5 +119,4 @@ class TestRunner:
         t.start()
         ret = self.run_devices(device_pool)
         t.cancel()
-
         return ret
