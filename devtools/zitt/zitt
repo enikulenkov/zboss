@@ -137,7 +137,7 @@ def enable_logging(verbose, debug_output):
     if debug_output:
         log_level = logging.DEBUG
 
-    logging.basicConfig(level=log_level)
+    logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', datefmt='%I:%M:%S', level=log_level)
 
 def _main(args):
     enable_logging(args.verbose, args.debug)
