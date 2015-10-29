@@ -119,7 +119,7 @@ def update_statistics(stats, test_res):
         if errors_cnt:
             stats['errors_count'] = stats['errors_count'] + errors_cnt
             test_failed = True
-        stats['warnings_count'] = stats['warnings_count'] + len(instance_res['errors'])
+        stats['warnings_count'] = stats['warnings_count'] + len(instance_res['warnings'])
 
     if test_failed:
         stats['tests_failed'] = stats['tests_failed'] + 1
