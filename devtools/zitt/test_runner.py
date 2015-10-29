@@ -17,8 +17,8 @@ class TestRunner:
                              'dev_return_code' : 'undefined'}
 
         def _clear(self):
-            self.sem.release()
             self.finished = True
+            self.sem.release()
             self.device.remove_listener(self)
             logging.debug('instance {} finished'.format(self.tid))
 
@@ -89,6 +89,9 @@ class TestRunner:
                             self.result['result'] = zitt_common.RET_STARTUP_ERROR
                             self.stop_devices()
                             break
+                    else:
+                        # Timeout has happened, break the loop
+                        break
         except KeyboardInterrupt:
             self.result['result'] = zitt_common.RET_STOPPED_BY_USER
         except:
