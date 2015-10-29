@@ -53,7 +53,7 @@ PURPOSE: Test for ZC application written using ZDO.
 #include "zb_nwk.h"
 #include "zb_aps.h"
 #include "zb_zdo.h"
-#include "zb_test.h"
+#include "zb_systest.h"
 
 /*! \addtogroup ZB_TESTS */
 /*! @{ */
@@ -86,7 +86,7 @@ MAIN()
 
   if (zdo_dev_start() != RET_OK)
   {
-    TRACE_MSG(TRACE_ERROR, "zdo_dev_start failed", (FMT__0));
+    ZB_SYSTEST_ERROR("zdo_dev_start failed", (FMT__0));
   }
   else
   {
@@ -105,20 +105,20 @@ void zb_zdo_startup_complete(zb_uint8_t param) ZB_CALLBACK
   {
     TRACE_MSG(TRACE_APS1, "Device STARTED OK", (FMT__0));
     zb_af_set_data_indication(data_indication);
-    zb_test_started();
+    zb_systest_started();
     send_data((zb_buf_t *)ZB_BUF_FROM_REF(param));
   }
   else
   {
-    TRACE_MSG(TRACE_ERROR, "Device started FAILED status %d", (FMT__D, (int)buf->u.hdr.status));
     zb_free_buf(buf);
+    ZB_SYSTEST_EXIT_ERR("Device started FAILED status %d", (FMT__D, (int)buf->u.hdr.status));
   }
 }
 
 static void test_finish(zb_uint8_t param) ZB_CALLBACK
 {
   ZB_ASSERT(param == 0);
-  zb_test_finished();
+  zb_systest_finished();
 }
 
 static void send_data(zb_buf_t *buf)
@@ -159,8 +159,7 @@ void data_indication(zb_uint8_t param)
                          asdu, (int)ZB_BUF_LEN(asdu), asdu->u.hdr.status));
   if (packet_received)
   {
-      ZB_TEST_ERROR("Duplicate isn't filtered!\n");
-      TRACE_MSG(TRACE_ERROR, "Duplicate isn't filtered!", (FMT__0));
+      ZB_SYSTEST_ERROR("Duplicate isn't filtered!", (FMT__0));
   }
 
   for (i = 0 ; i < ZB_BUF_LEN(asdu) ; ++i)
@@ -168,8 +167,7 @@ void data_indication(zb_uint8_t param)
     TRACE_MSG(TRACE_APS3, "%x %c", (FMT__D_C, (int)ptr[i], ptr[i]));
     if (ptr[i] != i % 32 + '0')
     {
-      ZB_TEST_ERROR("Bad data\n");
-      TRACE_MSG(TRACE_ERROR, "Bad data %hx %c wants %x %c", (FMT__H_C_D_C, ptr[i], ptr[i],
+      ZB_SYSTEST_ERROR("Bad data %hx %c wants %x %c", (FMT__H_C_D_C, ptr[i], ptr[i],
                               (int)(i % 32 + '0'), (char)i % 32 + '0'));
     }
   }

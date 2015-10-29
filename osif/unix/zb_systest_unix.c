@@ -43,20 +43,36 @@
 * ClarIDy/UBEC/DSR.                                                        *
 *                                                                          *
 ****************************************************************************
-PURPOSE: Header used by integration tests.
+PURPOSE: Implementation of functions used by integration tests for Unix.
 */
 
-#include "zb_common.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include "zb_systest.h"
 
-#ifndef ZB_TEST_H
-#define ZB_TEST_H 1
+void zb_systest_started()
+{
+  printf("Device started OK\n");
+}
 
-void zb_test_started();
-void zb_test_finished();
-void zb_test_error(char *file, int line, char *msg);
-void zb_test_warn(char *file, int line, char *msg);
+void zb_systest_finished()
+{
+  printf("Device finished\n");
+  exit(0);
+}
 
-#define ZB_TEST_ERROR(msg) zb_test_error(__FILE__, __LINE__, msg)
-#define ZB_TEST_WARN(msg) zb_test_warn(__FILE__, __LINE__, msg)
+void zb_systest_error(enum zb_systest_err_lvl lvl, zb_char_t *fmt_str,
+                      zb_char_t *file, zb_int_t line, zb_int_t args_size, ...)
+{
+  va_list arglist;
 
-#endif /* ZB_TEST_H */
+  printf(lvl == ZB_SYSTEST_LVL_ERR ? "Error:" : "Warning:");
+  printf("%s:%d ", file, line);
+  va_start(arglist, args_size);
+  vprintf(fmt_str, arglist);
+  va_end(arglist);
+  if (fmt_str[strlen(fmt_str) - 1] != '\n')
+  {
+    printf("\n");
+  }
+}

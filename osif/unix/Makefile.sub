@@ -47,4 +47,5 @@
 #*/
 
 zboss_SRCS += osif/unix/zb_trace_unix.c osif/unix/zb_mac_transport_linux_pipes.c \
-              osif/unix/zb_mac_transport_linux_spidev.c osif/unix/zb_test_unix.c
+              osif/unix/zb_mac_transport_linux_spidev.c \
+              osif/unix/zb_systest_unix.c

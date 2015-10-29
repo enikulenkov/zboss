@@ -53,7 +53,7 @@ PURPOSE: Test for ZC application written using ZDO.
 #include "zb_nwk.h"
 #include "zb_aps.h"
 #include "zb_zdo.h"
-#include "zb_test.h"
+#include "zb_systest.h"
 
 #ifndef ZB_ED_ROLE
 #error define ZB_ED_ROLE to compile ze tests
@@ -127,7 +127,7 @@ MAIN()
 
   if (zdo_dev_start() != RET_OK)
   {
-    TRACE_MSG(TRACE_ERROR, "zdo_dev_start failed", (FMT__0));
+    ZB_SYSTEST_ERROR("zdo_dev_start failed", (FMT__0));
   }
   else
   {
@@ -145,7 +145,7 @@ void zb_zdo_startup_complete(zb_uint8_t param) ZB_CALLBACK
   zb_buf_t *buf = ZB_BUF_FROM_REF(param);
   if (buf->u.hdr.status == 0)
   {
-    zb_test_started();
+    zb_systest_started();
     TRACE_MSG(TRACE_APS1, "Device STARTED OK", (FMT__0));
     set_aib_information(param);
     ZB_SCHEDULE_ALARM(get_aib_information, param, ZB_MILLISECONDS_TO_BEACON_INTERVAL(2000));
@@ -158,7 +158,7 @@ void zb_zdo_startup_complete(zb_uint8_t param) ZB_CALLBACK
   }
   else
   {
-    TRACE_MSG(TRACE_ERROR, "Device started FAILED status %d", (FMT__D, (int)buf->u.hdr.status));
+    ZB_SYSTEST_EXIT_ERR("Device started FAILED status %d", (FMT__D, (int)buf->u.hdr.status));
     zb_free_buf(buf);
   }
 }
@@ -521,7 +521,7 @@ void get_pib_unsupported_attr(zb_uint8_t param)
   ZB_BUF_INITIAL_ALLOC(buf, sizeof(zb_mlme_get_request_t), req);
   req->pib_attr = 0xaa;
   zb_mlme_get_request(param);
-  zb_test_finished();
+  zb_systest_finished();
 }
 
 /*! @} */

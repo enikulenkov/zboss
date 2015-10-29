@@ -43,29 +43,41 @@
 * ClarIDy/UBEC/DSR.                                                        *
 *                                                                          *
 ****************************************************************************
-PURPOSE: Implementation of functions used by integration tests for Unix.
+PURPOSE: Header used by integration tests.
 */
 
-#include "stdio.h"
-#include "stdlib.h"
+#include "zb_common.h"
+#include "zb_trace.h"
 
-void zb_test_started()
-{
-  printf("Device started OK\n");
+#ifndef ZB_SYSTEST_H
+#define ZB_SYSTEST_H 1
+
+enum zb_systest_err_lvl {
+  ZB_SYSTEST_LVL_ERR,
+  ZB_SYSTEST_LVL_WARN
+};
+
+void zb_systest_started();
+void zb_systest_finished();
+void zb_systest_error(enum zb_systest_err_lvl lvl, zb_char_t *fmt_str,
+                      zb_char_t *file, zb_int_t line, zb_int_t args_size, ...);
+
+#define ZB_SYSTEST_ERROR(fmt, args)                                         \
+{                                                                           \
+  TRACE_MSG(TRACE_ERROR, fmt, args);                                        \
+  zb_systest_error(ZB_SYSTEST_LVL_ERR, fmt, _T0 args);                      \
 }
 
-void zb_test_finished()
-{
-  printf("Device finished\n");
-  exit(0);
+#define ZB_SYSTEST_EXIT_ERR(fmt, args)                                      \
+{                                                                           \
+  ZB_SYSTEST_ERROR(fmt, args);                                              \
+  zb_systest_finished();                                                    \
 }
 
-void zb_test_error(char *file, int line, char *msg)
-{
-  printf("Error:%s:%d: %s\n", file, line, msg);
+#define ZB_SYSTEST_WARN(fmt, args)                                          \
+{                                                                           \
+  TRACE_MSG(TRACE_INFO1, fmt, args);                                        \
+  zb_systest_error(ZB_SYSTEST_LVL_WARN, fmt, _T0 args);                     \
 }
 
-void zb_test_warn(char *file, int line, char *msg)
-{
-  printf("Warning:%s:%d: %s\n", file, line, msg);
-}
+#endif /* ZB_SYSTEST_H */
