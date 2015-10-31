@@ -51,7 +51,7 @@ class TestRunner:
             self.tid.start()
             self.sem.acquire()
             logging.debug('instance {} started'.format(self.tid))
-            return self.result['dev_return_code'] == 'undefined'
+            return self.result['dev_return_code'] in ('undefined', '0')
 
         def stop_instance(self):
             with self.mutex:
