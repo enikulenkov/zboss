@@ -55,20 +55,24 @@ def check_args(args):
     return ret
 
 def run_testsuite_prerun_hooks():
-    for hook in zitt["conf"]["hooks"]:
-        globals()[hook].prerun_test_suite(zitt["conf"])
+    if "hooks" in zitt["conf"]:
+        for hook in zitt["conf"]["hooks"]:
+            globals()[hook].prerun_test_suite(zitt["conf"])
 
 def run_testsuite_postrun_hooks():
-    for hook in zitt["conf"]["hooks"]:
-        globals()[hook].postrun_test_suite(zitt["conf"])
+    if "hooks" in zitt["conf"]:
+        for hook in zitt["conf"]["hooks"]:
+            globals()[hook].postrun_test_suite(zitt["conf"])
 
 def run_test_prerun_hooks(test_descr):
-    for hook in zitt["conf"]["hooks"]:
-        globals()[hook].prerun_test(zitt, test_descr)
+    if "hooks" in zitt["conf"]:
+        for hook in zitt["conf"]["hooks"]:
+            globals()[hook].prerun_test(zitt, test_descr)
 
 def run_test_postrun_hooks(test_descr):
-    for hook in zitt["conf"]["hooks"]:
-        globals()[hook].postrun_test(zitt, test_descr)
+    if "hooks" in zitt["conf"]:
+        for hook in zitt["conf"]["hooks"]:
+            globals()[hook].postrun_test(zitt, test_descr)
 
 def run_test(descr_location):
     pwd      = os.path.realpath(os.curdir)
