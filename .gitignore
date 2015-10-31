@@ -91,3 +91,5 @@ include/zb_config.h
 *.log
 ns.txt
 __pycache__
+*.pyc
+devtools/zitt/zittc
