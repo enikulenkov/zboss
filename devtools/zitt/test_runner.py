@@ -70,20 +70,20 @@ class TestRunner:
             self.device.remove_listener(self)
             logging.debug('instance {} finished'.format(self.tid))
 
-        def instance_started_event(self):
+        def instance_started_event(self, instance):
             logging.debug('instance started event {}'.format(self.tid))
             with self.mutex:
                 self.sem.release()
 
-        def instance_error_event(self, msg):
+        def instance_error_event(self, instance, msg):
             with self.mutex:
                 self.result['errors'].append(msg)
 
-        def instance_warning_event(self, msg):
+        def instance_warning_event(self, instance, msg):
             with self.mutex:
                 self.result['warnings'].append(msg)
 
-        def instance_finished_event(self, return_code):
+        def instance_finished_event(self, instance, return_code):
             logging.debug('instance finished event {}'.format(self.tid))
             with self.mutex:
                 if self.result['dev_return_code'] == 'undefined':

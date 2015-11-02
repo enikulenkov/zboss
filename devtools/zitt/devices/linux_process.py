@@ -52,7 +52,7 @@ from .base_device import BaseDevice
 
 class LinuxProcess(BaseDevice):
     def __init__(self, params):
-        BaseDevice.init(self, params)
+        BaseDevice.__init__(self, params)
         self.busy = False
 
     def is_busy(self):
@@ -60,6 +60,7 @@ class LinuxProcess(BaseDevice):
 
     def run_instance(self, instance):
         self.instance = instance
+        self.busy = True
         try:
             args = ["stdbuf", "-oL", instance["binary"]]
             if "binary_args" in instance:
@@ -93,7 +94,7 @@ class LinuxProcess(BaseDevice):
             logging.info('Proc {} ret code {}'.format(child_pid, self.child_proc.returncode))
 
             self.notify_instance_finished(self.child_proc.returncode)
-        except:
+        finally:
             self.stop_instance()
 
     def stop_instance(self):
@@ -103,3 +104,4 @@ class LinuxProcess(BaseDevice):
             self.child_proc.terminate()
             #TODO: Better error code
             self.notify_instance_finished(1)
+        self.busy = False
