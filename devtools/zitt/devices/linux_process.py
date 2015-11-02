@@ -1,18 +1,17 @@
-import threading
 import subprocess
-import shlex
 import logging
+from .base_device import BaseDevice
 
-class LinuxProcess:
+class LinuxProcess(BaseDevice):
     def __init__(self, params):
-        self.listeners = []
-        self.busy      = False
-        self.lock      = threading.Lock()
+        BaseDevice.init(self, params)
+        self.busy = False
 
     def is_busy(self):
         return self.busy
 
     def run_instance(self, instance):
+        self.instance = instance
         try:
             args = ["stdbuf", "-oL", instance["binary"]]
             if "binary_args" in instance:
@@ -54,27 +53,5 @@ class LinuxProcess:
         if self.child_proc.poll() == None:
             logging.info("terminating child {}".format(self.child_proc.pid))
             self.child_proc.terminate()
-
-    def add_listener(self, listener):
-        with self.lock:
-            self.listeners.append(listener)
-
-    def remove_listener(self, listener):
-        with self.lock:
-            self.listeners.remove(listener)
-
-    def notify_instance_started(self):
-        for listener in self.listeners:
-            listener.instance_started_event()
-
-    def notify_instance_error(self, msg):
-        for listener in self.listeners:
-            listener.instance_error_event(msg)
-
-    def notify_instance_warning(self, msg):
-        for listener in self.listeners:
-            listener.instance_warning_event(msg)
-
-    def notify_instance_finished(self, return_code):
-        for listener in self.listeners:
-            listener.instance_finished_event(return_code)
+            #TODO: Better error code
+            self.notify_instance_finished(1)
