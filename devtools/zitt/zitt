@@ -145,7 +145,6 @@ def run_test(descr_location):
         descr = json.load(f)
         run_test_by_descr(descr)
     os.chdir(pwd)
-    return ret
 
 def init_zitt_ctx(ctx, conf):
     ctx['conf']        = conf
@@ -197,10 +196,10 @@ def _main(args):
 
     if args.test_list:
         for test_location in args.test_list:
-            ret = run_test(test_location.strip())
+            run_test(test_location.strip())
 
     if args.single_test:
-        ret = run_test(args.single_test.strip())
+        run_test(args.single_test.strip())
 
     run_testsuite_postrun_hooks()
 
