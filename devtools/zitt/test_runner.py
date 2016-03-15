@@ -168,8 +168,10 @@ class TestRunner:
             self.stop_devices()
 
     def run(self, device_pool):
-        t = threading.Timer(self.test_timeout, self.test_timeout_timer, )
-        t.start()
+        if self.test_timeout != -1:
+            t = threading.Timer(self.test_timeout, self.test_timeout_timer, )
+            t.start()
         ret = self.run_devices(device_pool)
-        t.cancel()
+        if self.test_timeout != -1:
+            t.cancel()
         return ret
