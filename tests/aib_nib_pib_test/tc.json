@@ -5,12 +5,13 @@
     {
       "binary"      : "./start_zc",
       "test_role"   : "th1",
-      "start_idx"   : 0
+      "init_level"  : 0
     },
     {
       "binary"      : "./start_ze",
       "test_role"   : "dut",
-      "start_idx"   : 1
+      "init_level"  : 1,
+      "debug"       : true
     }
   ],
 

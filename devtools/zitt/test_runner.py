@@ -124,7 +124,7 @@ class TestRunner:
             descr = self.test_descr
             print("running test {}".format(descr["name"]))
 
-            for instance in sorted(descr["instances"], key = lambda x: x["start_idx"]):
+            for instance in sorted(descr["instances"], key = lambda x: x["init_level"]):
                 device = device_pool.get_free_device()
                 executor = self.InstanceExecutor(device, instance)
                 self.dev_threads.append(executor)
