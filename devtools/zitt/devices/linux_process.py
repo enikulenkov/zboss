@@ -78,7 +78,7 @@ class LinuxProcess(BaseDevice):
             for line in iter(self.child_proc.stdout.readline, b''):
                 decoded_line = line.decode('utf-8')
                 logging.debug('Proc {} stdout: {}'.format(child_pid, decoded_line))
-                if "Device started" in decoded_line:
+                if "Device started OK" in decoded_line:
                     logging.info('Instance {} started successfully'.format(child_pid))
                     self.notify_instance_started()
                 elif decoded_line.startswith("Error:"):
