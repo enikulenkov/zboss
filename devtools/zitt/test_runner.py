@@ -59,6 +59,7 @@ class TestRunner:
             self.sem      = threading.Semaphore(0)
             self.mutex    = threading.Lock()
             self.finished = False
+            self.started  = False
             self.result   = {'name'            : instance['binary'],
                              'errors'          : [],
                              'warnings'        : [],
@@ -72,6 +73,7 @@ class TestRunner:
 
         def instance_started_event(self, instance):
             logging.debug('instance started event {}'.format(self.tid))
+            self.started = True
             with self.mutex:
                 self.sem.release()
 
@@ -99,7 +101,7 @@ class TestRunner:
             self.tid.start()
             self.sem.acquire()
             logging.debug('instance {} started'.format(self.tid))
-            return self.result['dev_return_code'] in ('undefined', '0')
+            return self.started and self.result['dev_return_code'] in ('undefined', '0')
 
         def stop_instance(self):
             with self.mutex:
