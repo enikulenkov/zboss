@@ -46,33 +46,32 @@
 #PURPOSE:
 #*/
 
-from devices import *
+from .base_device import BaseDevice
 
-class DevicePool:
-    def __create_dev(self, device_conf):
-        dev_type = device_conf["type"]
-        params   = device_conf["params"]
+class FakeDevice(BaseDevice):
+    def __init__(self, params):
+        BaseDevice.__init__(self, params)
+        self.busy = False
 
-        if dev_type == 'linux_process':
-            return linux_process.LinuxProcess(params)
-        elif dev_type == 'fake':
-            return fake_device.FakeDevice(params)
-        else:
-            raise ValueError('Invalid dev type {}'.format(dev_type))
+    def is_busy(self):
+        return self.busy
 
-    def __add_device(self, device_conf):
-        new_device = self.__create_dev(device_conf)
-        self.devices.append(new_device)
+    def run_instance(self, instance):
+        self.busy = True
+        self.instance = instance
+        self.modifiers = instance['modifiers']
+        if "NoStartNotification" not in self.modifiers:
+            self.notify_instance_started()
+        if "ReportError" in self.modifiers:
+            self.notify_instance_error("Fake error!")
+        if "ReportWarning" in self.modifiers:
+            self.notify_instance_warning("Fake warning!")
+        if "NeverFinish" not in self.modifiers:
+            if "ReturnError" in self.modifiers:
+                err_code = 100
+            else:
+                err_code = 0
+            self.notify_instance_finished(err_code)
 
-    def __init__(self, devices_conf):
-        self.devices = []
-        for device_conf in devices_conf:
-            self.__add_device(device_conf)
-
-    def get_free_device(self):
-        ret = None
-        for dev in self.devices:
-            if not dev.is_busy():
-                ret = dev
-                break
-        return ret
+    def stop_instance(self):
+        return

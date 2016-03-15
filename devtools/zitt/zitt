@@ -121,6 +121,17 @@ def run_test_postrun_hooks(test_descr):
         for hook in zitt["conf"]["hooks"]:
             globals()[hook].postrun_test(zitt, test_descr)
 
+def run_test_by_descr(descr):
+    run_test_prerun_hooks(descr)
+    test_runner = TestRunner(descr)
+    ret = test_runner.run(zitt["device_pool"])
+    run_test_postrun_hooks(descr)
+    print("Test {} result {}".format(
+        descr['name'],
+        json.dumps(ret, indent=4, sort_keys=True, separators=(',', ': '))))
+    update_statistics(zitt["stats"], ret)
+
+
 def run_test(descr_location):
     pwd      = os.path.realpath(os.curdir)
     test_dir = os.path.dirname(descr_location)
@@ -132,24 +143,12 @@ def run_test(descr_location):
     os.chdir(test_dir)
     with open(descr_location, "r") as f:
         descr = json.load(f)
-        run_test_prerun_hooks(descr)
-        test_runner = TestRunner(descr)
-        ret = test_runner.run(zitt["device_pool"])
-        run_test_postrun_hooks(descr)
-
-        print("Test {} result {}".format(
-            descr['name'],
-            json.dumps(ret, indent=4, sort_keys=True, separators=(',', ': '))))
-
-        update_statistics(zitt["stats"], ret)
-
-
+        run_test_by_descr(descr)
     os.chdir(pwd)
-
     return ret
 
-def init_zitt_ctx(ctx, args):
-    ctx['conf']        = json.load(args.conf)
+def init_zitt_ctx(ctx, conf):
+    ctx['conf']        = conf
     ctx['device_pool'] = None
     ctx['stats']       =  {"tests_executed" : 0,
                            "tests_failed"   : 0,
@@ -181,18 +180,18 @@ def print_statistics(stats):
 
 def enable_logging(verbose, debug_output):
     log_level = logging.ERROR
-
     if verbose:
         log_level = logging.INFO
-
     if debug_output:
         log_level = logging.DEBUG
-
-    logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', datefmt='%I:%M:%S', level=log_level)
+    logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
+                        datefmt='%I:%M:%S',
+                        level=log_level)
 
 def _main(args):
     enable_logging(args.verbose, args.debug)
-    init_zitt_ctx(zitt, args)
+    conf = json.load(args.conf)
+    init_zitt_ctx(zitt, conf)
     run_testsuite_prerun_hooks()
     zitt["device_pool"] = DevicePool(zitt["conf"]["device_pool"])
 
@@ -213,12 +212,10 @@ def main():
     (parser, args) = parse_args()
 
     ret = check_args(args)
-
     if ret == 0:
         ret = _main(args)
     else:
         parser.print_help()
-
     return ret
 
 if __name__== '__main__':

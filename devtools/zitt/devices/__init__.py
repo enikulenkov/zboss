@@ -46,4 +46,4 @@
 #PURPOSE:
 #*/
 
-__all__ = ["linux_process"]
+__all__ = ["linux_process", "fake_device"]
