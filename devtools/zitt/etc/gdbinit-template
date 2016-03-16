@@ -1,0 +1,6 @@
+attach $(pid)
+set breakpoint pending on
+b main
+c
+c
+c

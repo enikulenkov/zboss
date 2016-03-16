@@ -93,3 +93,4 @@ ns.txt
 __pycache__
 *.pyc
 devtools/zitt/zittc
+devtools/zitt/etc/gdbinit-current

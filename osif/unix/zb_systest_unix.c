@@ -53,6 +53,7 @@ PURPOSE: Implementation of functions used by integration tests for Unix.
 void zb_systest_started()
 {
   printf("Device started OK\n");
+  fflush(stdout);
 }
 
 void zb_systest_finished()
@@ -75,4 +76,5 @@ void zb_systest_error(enum zb_systest_err_lvl lvl, zb_char_t *fmt_str,
   {
     printf("\n");
   }
+  fflush(stdout);
 }

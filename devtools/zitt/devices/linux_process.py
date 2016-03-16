@@ -48,6 +48,8 @@
 
 import subprocess
 import logging
+import signal
+import os
 from .base_device import BaseDevice
 
 class LinuxProcess(BaseDevice):
@@ -58,15 +60,36 @@ class LinuxProcess(BaseDevice):
     def is_busy(self):
         return self.busy
 
+    def gdb_command_file_create(self, instance_pid):
+        self_dir = os.path.dirname(os.path.realpath(__file__))
+        out_file_path = os.path.realpath(self_dir + "/../etc/gdbinit-current")
+        template_path = os.path.realpath(self_dir + "/../etc/gdbinit-template")
+        with open(out_file_path, "wt") as out_file:
+            with open(template_path, "rt") as template:
+                for line in template:
+                    out_file.write(line.replace('$(pid)', str(instance_pid)))
+        return out_file_path
+
+    def debug_preexec(self):
+        pid = os.getpid()
+        gdb_cmdfile_path = self.gdb_command_file_create(pid)
+        logging.error('Instance {} with PID {} is running under debug.\n'
+                      'You can attach to it using the following command:\n'
+                      'gdb -x {}'.format(self.instance["binary"], pid, gdb_cmdfile_path))
+        os.kill(pid, signal.SIGSTOP)
+
     def run_instance(self, instance):
         self.instance = instance
         self.busy = True
         try:
-            args = ["stdbuf", "-oL", instance["binary"]]
+            args = [instance["binary"]]
             if "binary_args" in instance:
                 args = args + instance["binary_args"]
-                self.child_proc = subprocess.Popen(args, stdout=subprocess.PIPE, bufsize=1)
+            preexec_fn = self.debug_preexec if "debug" in instance else None
+            self.child_proc = subprocess.Popen(args, stdout=subprocess.PIPE,
+                    bufsize=1, preexec_fn = preexec_fn)
         except:
+            logging.exception("can't run device {}".format(instance["binary"]))
             return
 
         try:
