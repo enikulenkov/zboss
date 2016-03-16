@@ -5,12 +5,12 @@
     {
       "binary"      : "./aps_dups_rej_zc",
       "test_role"   : "th1",
-      "init_level"   : 0
+      "init_level"  : 0
     },
     {
       "binary"      : "./aps_dups_rej_ze",
       "test_role"   : "dut",
-      "init_level"   : 1
+      "init_level"  : 1
     }
   ],
 

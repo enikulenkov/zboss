@@ -10,8 +10,7 @@
     {
       "binary"      : "./start_ze",
       "test_role"   : "dut",
-      "init_level"  : 1,
-      "debug"       : true
+      "init_level"  : 1
     }
   ],
 
