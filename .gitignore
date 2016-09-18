@@ -94,3 +94,5 @@ __pycache__
 *.pyc
 devtools/zitt/zittc
 devtools/zitt/etc/gdbinit-current
+.ycm_extra_conf.py
+settings.vim
